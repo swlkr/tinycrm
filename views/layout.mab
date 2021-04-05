@@ -1,0 +1,28 @@
+html5 do
+  head do
+    title "tiny crm"
+    meta name: "viewport", content: "width=device-width, initial-scale=1"
+    meta charset: "utf-8"
+    link href: "/app.css", rel: "stylesheet"
+  end
+
+  body.container.mx_auto do
+    div.hstack.p_sm do
+      a(href: "/") { "tinycrm" }
+      div.spacer{}
+      div.hstack.spacing.sm do
+        if @current_user
+          a href: "/chances" do "Chances" end
+          a href: "/logout" do "Logout" end
+        else
+          a href: "/signup" do "Login" end
+          a href: "/signup", class: "button lg" do
+            "Sign up"
+          end
+        end
+      end
+    end
+
+    yield
+  end
+end

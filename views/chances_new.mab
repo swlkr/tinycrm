@@ -1,0 +1,41 @@
+div.vstack.mt_lg do
+  form.w_sm.mx_auto action: "/chances", method: :post do
+    div.error @error if @error
+
+    div.vstack.spacing.xs do
+      input type: "hidden", name: "_csrf", value: csrf_token("/chances")
+
+      div.field.vstack.spacing.xs do
+        label for: "company_name" do
+          "Enter a company"
+        end
+        input type: "text", name: "company"
+      end
+
+      div.field.vstack.spacing.xs do
+        label for: "assignee" do
+          "Assignee"
+        end
+        input type: "text", name: "assignee"
+      end
+
+      div.field.vstack.spacing.xs do
+        label for: "stage" do
+          "Stage"
+        end
+        input type: "text", name: "stage"
+      end
+
+      div.field.vstack.spacing.xs do
+        label for: "value" do
+          "Value"
+        end
+        input type: "number", name: "value"
+      end
+
+      button.lg type: "submit" do
+        "Create a chance"
+      end
+    end
+  end
+end

@@ -1,0 +1,3 @@
+div.vstack.mt_2xl.text_center
+  h1 "This is tiny CRM"
+  p "The simple, free CRM web application"

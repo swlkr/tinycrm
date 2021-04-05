@@ -1,0 +1,305 @@
+html {
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body, h1, h2, h3, h4, h5, h6, p, ol, ul {
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+input, textarea {
+  border: none;
+  margin: 0;
+  padding: 0;
+  resize: none;
+  background: none;
+  -webkit-appearance: none;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+}
+
+a {
+  display: block;
+  font-size: inherit;
+}
+
+button {
+  font-size: inherit;
+}
+
+/* vars */
+:root {
+  /* typography */
+  --font-primary: sans-serif;
+  --font-secondary: serif;
+
+  /* set base values */
+  --text-base-size: 1em;
+  --text-scale-ratio: 1.2;
+
+   /* type scale */
+  --text-sm: calc(1em / var(--text-scale-ratio));
+  --text-md: calc(1em * var(--text-scale-ratio));
+  --text-lg: calc(1em * var(--text-scale-ratio) * var(--text-scale-ratio));
+  --text-xl: calc(1em * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio));
+  --text-2xl: calc(1em * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio));
+  --text-3xl: calc(1em * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio) * var(--text-scale-ratio));
+
+  /* line-height */
+  --heading-line-height: 1.2;
+  --body-line-height: 1.4;
+
+  /* spacing */
+  --spacing-3xs: 0.125rem;
+  --spacing-2xs: 0.25rem;
+  --spacing-xs:  0.5rem;
+  --spacing-s:   1rem;
+  --spacing-m:   2rem;
+  --spacing-l:   4rem;
+  --spacing-xl:  8rem;
+  --spacing-2xl: 16rem;
+  --spacing-3xl: 32rem;
+  --spacing-4xl: 64rem;
+
+  /* borders */
+  --border-0: 0px;
+  --border-2: 2px;
+  --border-4: 4px;
+  --border-8: 8px;
+  --border: 1px;
+
+  /* border radius */
+  --rounded-none: 0;
+  --rounded-sm: 0.125rem;
+  --rounded-md: 0.375rem;
+  --rounded-lg: 0.5rem;
+  --rounded-xl: 0.75rem;
+  --rounded-2xl: 1rem;
+  --rounded-3xl: 1.5rem;
+  --rounded-full: 9999px;
+
+  /* SHADOWS */
+  --shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+
+  /* COLORS */
+  --blue: #109cf1;
+  --dark-blue: #384D6C;
+  --yellow: #ffbb46;
+  --red: #f76b58;
+  --green: #67D083;
+  --purple: #8060EF;
+  --black: #1D2A3C;
+  --dark-gray: #343C46;
+  --gray: #727682;
+  --light-gray: #ccc;
+  --white: #fff;
+
+  /* sizes */
+  --size-4: 0.5rem;
+  --size-5: 1.0rem;
+  --size-6: 1.5rem;
+  --size-7: 2.0rem;
+
+  --width-xs: 20rem;
+  --width-sm: 24rem;
+  --width-md: 28rem;
+  --width-lg: 32rem;
+
+  --max-width-lg: 64rem;
+}
+
+html, body {
+  height: 100%;
+  font-size: var(--text-base-size);
+  font-family: var(--font-primary);
+}
+
+h1, h2, h3, h4, form legend {
+  line-height: var(--heading-line-height);
+}
+
+h1 {
+  font-size: var(--text-3xl);
+}
+
+h2 {
+  font-size: var(--text-2xl);
+}
+
+h3 {
+  font-size: var(--text-xl);
+}
+
+h4 {
+  font-size: var(--text-lg);
+}
+
+h5 {
+  font-size: var(--text-md);
+}
+
+small {
+  font-size: var(--text-sm);
+}
+
+p {
+  line-height: var(--body-line-height);
+  font-size: clamp(16px, 1.5vw, 32px);
+}
+
+input[type="hidden"], [hidden] {
+  display: none;
+}
+
+.hstack {
+  display: flex;
+  align-self: stretch;
+  align-items: center;
+  flex-direction: row;
+}
+
+.vstack {
+  display: flex;
+  flex-direction: column;
+}
+
+.center {
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.vstack.spacing.xs > * {
+  margin-bottom: var(--spacing-xs);
+}
+
+.vstack.spacing.sm > * {
+  margin-bottom: var(--spacing-s);
+}
+
+.vstack.spacing.md > * {
+  margin-bottom: var(--spacing-md);
+}
+
+.vstack.spacing:last-child {
+  margin-bottom: 0;
+}
+
+.hstack.spacing.sm > * {
+  margin-right: var(--spacing-s);
+}
+
+.hstack.spacing:last-child {
+  margin-right: 0;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"] {
+  border: solid 1px var(--light-gray);
+  padding: var(--spacing-s);
+  display: block;
+  border-radius: var(--rounded-lg);
+  font-size: var(--font-size-lg);
+  width: 100%;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"] {
+  border-color: var(--blue);
+  box-shadow: var(--shadow);
+}
+
+button, .button {
+  border: none;
+  border-radius: var(--rounded-lg);
+  color: var(--white);
+  background-color: var(--blue);
+  padding: var(--spacing-xs);
+  width: 100%;
+  display: block;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+}
+
+button.lg, .button.lg {
+  padding: var(--spacing-s);
+  font-size: var(--text-md);
+}
+
+button:hover {
+  background-color: var(--dark-blue);
+}
+
+.w_sm {
+  width: var(--width-sm);
+}
+
+.field:focus-within label {
+  color: var(--blue);
+}
+
+.error {
+  color: var(--red);
+}
+
+a {
+  text-decoration: none;
+  color: var(--blue);
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a.button:hover {
+  text-decoration: none;
+}
+
+.p_sm {
+  padding: var(--spacing-s);
+}
+
+.container {
+  max-width: var(--max-width-lg);
+}
+
+.mx_auto {
+  margin: 0 auto;
+}
+
+.w_full {
+  width: 100%;
+}
+
+.mt_2xl {
+  margin-top: var(--spacing-2xl);
+}
+
+.text_center {
+  text-align: center;
+}

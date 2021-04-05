@@ -1,0 +1,13 @@
+source "https://rubygems.org"
+
+gem "roda"
+gem "puma"
+gem "sequel"
+gem "markaby"
+gem "tilt"
+gem "sqlite3"
+gem "rack-console"
+gem "listen"
+gem "zeitwerk"
+gem "dotenv-rails"
+gem "rack"
