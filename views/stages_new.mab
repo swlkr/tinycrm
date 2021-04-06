@@ -1,0 +1,22 @@
+# STAGES_NEW VIEW
+div.vstack.mt_lg do
+  form.w_sm.mx_auto action: "/stages/new", method: :post do
+    div { csrf_tag("/stages/new") }
+
+    div.vstack.spacing.sm do
+      div.vstack.spacing.xxs do
+        fieldset do
+          label.vstack.spacing.xxs do
+            span "Name"
+            input type: "text", name: "stage[name]"
+          end
+        end
+        div.error @stage&.errors[:name]&.first if @stage&.errors[:name]&.first
+      end
+
+      button.lg type: "submit" do
+        "Save stage"
+      end
+    end
+  end
+end

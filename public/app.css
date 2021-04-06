@@ -66,7 +66,7 @@ button {
   --heading-line-height: 1.2;
   --body-line-height: 1.4;
 
-  /* spacing */
+  /* SPACING */
   --spacing-3xs: 0.125rem;
   --spacing-2xs: 0.25rem;
   --spacing-xs:  0.5rem;
@@ -117,12 +117,13 @@ button {
   --size-6: 1.5rem;
   --size-7: 2.0rem;
 
+  # WIDTHS
   --width-xs: 20rem;
   --width-sm: 24rem;
   --width-md: 28rem;
   --width-lg: 32rem;
-
-  --max-width-lg: 64rem;
+  --width-xl: 48rem;
+  --width-2xl: 64rem;
 }
 
 html, body {
@@ -190,6 +191,10 @@ input[type="hidden"], [hidden] {
   flex: 1;
 }
 
+.vstack.spacing.xxs > * {
+  margin-bottom: var(--spacing-2xs);
+}
+
 .vstack.spacing.xs > * {
   margin-bottom: var(--spacing-xs);
 }
@@ -199,10 +204,10 @@ input[type="hidden"], [hidden] {
 }
 
 .vstack.spacing.md > * {
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-m);
 }
 
-.vstack.spacing:last-child {
+.vstack.spacing > *:last-child {
   margin-bottom: 0;
 }
 
@@ -210,7 +215,7 @@ input[type="hidden"], [hidden] {
   margin-right: var(--spacing-s);
 }
 
-.hstack.spacing:last-child {
+.hstack.spacing > *:last-child {
   margin-right: 0;
 }
 
@@ -229,9 +234,68 @@ input[type="number"] {
 input[type="text"]:focus,
 input[type="email"]:focus,
 input[type="password"]:focus,
-input[type="number"] {
+input[type="number"]:focus {
   border-color: var(--blue);
   box-shadow: var(--shadow);
+}
+
+fieldset {
+  margin: 0;
+  padding: 0;
+  padding: var(--spacing-xs);
+  position: relative;
+  border: solid 1px var(--light-gray);
+  border-radius: var(--rounded-lg);
+}
+
+fieldset label {
+  font-size: var(--text-sm);
+  color: var(--gray);
+}
+
+fieldset:focus-within {
+  border-color: var(--blue);
+  box-shadow: var(--shadow);
+}
+
+fieldset:focus-within label {
+  color: var(--blue);
+}
+
+fieldset input[type="text"],
+fieldset input[type="email"],
+fieldset input[type="password"],
+fieldset input[type="number"] {
+  border: none;
+  padding: 0;
+}
+
+fieldset input[type="text"]:focus,
+fieldset input[type="email"]:focus,
+fieldset input[type="password"]:focus,
+fieldset input[type="number"]:focus {
+  border: none;
+  box-shadow: none;
+}
+
+fieldset legend {
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  top: var(--spacing-xs);
+  left: var(--spacing-xs);
+  color: var(--gray);
+  font-size: var(--text-sm);
+}
+
+fieldset select {
+  outline: none;
+  border: none;
+  -webkit-appearance: none;
+}
+
+fieldset select:active {
+  -webkit-appearance: none;
 }
 
 button, .button {
@@ -239,8 +303,7 @@ button, .button {
   border-radius: var(--rounded-lg);
   color: var(--white);
   background-color: var(--blue);
-  padding: var(--spacing-xs);
-  width: 100%;
+  padding: var(--spacing-s);
   display: block;
   box-shadow: var(--shadow);
   cursor: pointer;
@@ -280,12 +343,12 @@ a.button:hover {
   text-decoration: none;
 }
 
-.p_sm {
-  padding: var(--spacing-s);
+.p_y_sm {
+  padding: var(--spacing-s) 0;
 }
 
 .container {
-  max-width: var(--max-width-lg);
+  max-width: var(--width-2xl);
 }
 
 .mx_auto {
@@ -296,10 +359,22 @@ a.button:hover {
   width: 100%;
 }
 
+.mt_lg {
+  margin-top: var(--spacing-l);
+}
+
 .mt_2xl {
   margin-top: var(--spacing-2xl);
 }
 
 .text_center {
   text-align: center;
+}
+
+.justify_right {
+  justify-content: flex-end;
+}
+
+.w_fit_content {
+  width: fit-content;
 }

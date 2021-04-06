@@ -7,12 +7,12 @@ html5 do
   end
 
   body.container.mx_auto do
-    div.hstack.p_sm do
+    div.hstack.p_y_sm do
       a(href: "/") { "tinycrm" }
       div.spacer{}
       div.hstack.spacing.sm do
         if @current_user
-          a href: "/chances" do "Chances" end
+          a href: "/deals" do "Deals" end
           a href: "/logout" do "Logout" end
         else
           a href: "/signup" do "Login" end

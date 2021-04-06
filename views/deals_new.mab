@@ -1,0 +1,71 @@
+# DEALS_NEW VIEW
+div.vstack.mt_lg do
+  form.w_sm.mx_auto action: "/deals/new", method: :post do
+    div { csrf_tag("/deals/new") }
+    div.error @error if @error
+
+    div.vstack.spacing.sm do
+      fieldset do
+        label.vstack.spacing.xxs do
+          span "Company"
+          input type: "text", name: "company"
+        end
+      end
+
+      div.vstack.spacing.xxs do
+        fieldset.vstack.spacing.xxs do
+          label.vstack.spacing.xxs
+          span "Assignee"
+          select name: "assignee" do
+            @assignees.each do |a|
+              option value: a[:id] do
+                a[:email]
+              end
+            end
+          end
+        end
+
+        a href: "/users/new" do
+          "Invite a team member"
+        end
+      end
+
+      div.vstack.spacing.xxs do
+        fieldset do
+          label.vstack.spacing.xxs do
+            span "Stage"
+            select name: "stage" do
+              @stages.each do |a|
+                option value: a[:id] do
+                  a[:name]
+                end
+              end
+            end
+          end
+        end
+
+        a href: "/stages/new" do
+          "Add a stage"
+        end
+      end
+
+      fieldset do
+        label.vstack.spacing.xxs do
+          span "Value"
+          input type: "number", name: "value", value: 1_000
+        end
+      end
+
+      fieldset do
+        label.vstack.spacing.xxs do
+          span "Notes"
+          textarea name: "notes", rows: 10 do end
+        end
+      end
+
+      button.lg type: "submit" do
+        "Make a deal"
+      end
+    end
+  end
+end

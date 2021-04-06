@@ -90,7 +90,7 @@ DEPENDENCIES
   rack-console
   roda
   sequel
-  sqlite3
+  sqlite3 (~> 1.4)
   tilt
   zeitwerk
 
