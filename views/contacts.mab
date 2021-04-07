@@ -1,0 +1,61 @@
+# CONTACTS INDEX VIEW
+div.vstack.spacing.md do
+  if @contacts.any?
+    div.hstack.space_between do
+      h1 "Contacts"
+      a.button href: "/contacts/new" do
+        "New contact"
+      end
+    end
+  else
+    div.vstack.mt_2xl.spacing.sm.text_center do
+      p "You don't have any primary contacts at any companies yet, always be closing!"
+      a.button.w_fit_content.mx_auto href: "/contacts/new" do
+        "New contact"
+      end
+    end
+  end
+
+  unless @contacts.empty?
+    div.vstack do
+      table do
+        thead do
+          tr do
+            th "Name"
+            th "Created"
+            th "LinkedIn"
+            th "Email"
+            th "Phone"
+            th "Modified"
+            th "Notes"
+            th
+          end
+        end
+        tbody do
+          @contacts.each do |contact|
+            tr do
+              td do
+                a href: "/contacts/#{contact.hashid}" do
+                  span contact.name
+                end
+              end
+              td Time.at(contact.created_at).to_date.to_s
+              td contact.linkedin
+              td contact.email
+              td contact.phone
+              td do
+                Time.at(contact.updated_at).to_date.to_s if contact.updated_at
+              end
+              td contact.notes
+              td do
+                a href: "/contacts/#{contact.hashid}/edit" do
+                  "Edit"
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end

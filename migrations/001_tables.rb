@@ -29,6 +29,7 @@ Sequel.migration do
     create_table(:companies) do
       primary_key :id
       foreign_key :team_id, :teams, on_delete: :cascade
+      foreign_key :company_id, :companies, on_delete: :cascade
       String :name, null: false
       String :linkedin
       String :url

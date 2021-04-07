@@ -1,0 +1,72 @@
+# CONTACTS EDIT VIEW
+div.vstack.spacing.md do
+  h1.text_center "Edit Contact"
+  form.w_sm.mx_auto action: "/contacts/#{@contact.hashid}/edit", method: :post do
+    div { csrf_tag("/contacts/#{@contact.hashid}/edit") }
+
+    div.vstack.spacing.sm do
+      fieldset do
+        label.vstack.spacing.xxs do
+          span "Name"
+          input type: "text", name: "contact[name]", value: @contact.name
+          if name_error = @contact.errors[:name]&.first
+            div.error name_error
+          end
+        end
+      end
+
+      fieldset do
+        label.vstack.spacing.xxs do
+          span "LinkedIn"
+          input type: "text", name: "contact[linkedin]", value: @contact.linkedin
+          if linkedin_error = @contact.errors[:linkedin]
+            div.error linkedin_error
+          end
+        end
+      end
+
+      fieldset do
+        label.vstack.spacing.xxs do
+          span "Email"
+          input type: "text", name: "contact[email]", value: @contact.email
+          if email_error = @contact.errors[:email].first
+            div.error email_error
+          end
+        end
+      end
+
+      fieldset do
+        label.vstack.spacing.xxs do
+          span "Address"
+          input type: "text", name: "contact[address]", value: @contact.address
+          if address_error = @contact.errors[:address].first
+            div.error address_error
+          end
+        end
+      end
+
+      fieldset do
+        label.vstack.spacing.xxs do
+          span "Phone"
+          input type: "text", name: "contact[phone]", value: @contact.phone
+          if phone_error = @contact.errors[:phone].first
+            div.error phone_error
+          end
+        end
+      end
+
+      fieldset do
+        label.vstack.spacing.xxs do
+          span "Notes"
+          textarea name: "contact[notes]", rows: 10 do
+            @contact.notes
+          end
+        end
+      end
+
+      button type: "submit" do
+        "Save contact"
+      end
+    end
+  end
+end

@@ -85,21 +85,26 @@ class App < Roda
       end
     end
 
-    # LOGIN GET
-    r.get "login" do
-      :login
-    end
+    r.on "login" do
+      # GET /login
+      r.is do
+        :login
+      end
 
-    r.get "login", String do |token|
-      user = User.first Sequel.lit("token = ? and token_expires_at > ?", token, Time.now.to_i)
+      # GET /login/:token
+      r.on String do |token|
+        r.is do
+          user = User.first Sequel.lit("token = ? and token_expires_at > ?", token, Time.now.to_i)
 
-      if user
-        user.update token: nil, token_expires_at: nil
-        r.session["user_id"] = user[:id]
-        r.redirect "/deals"
-      else
-        response.status = 404
-        r.halt
+          if user
+            user.update token: nil, token_expires_at: nil
+            r.session["user_id"] = user[:id]
+            r.redirect "/deals"
+          else
+            response.status = 404
+            r.halt
+          end
+        end
       end
     end
 
@@ -297,6 +302,75 @@ class App < Roda
               :companies_edit
             end
           end
+        end
+      end
+    end
+
+    # CONTACTS
+    r.on "contacts" do
+
+      def params(r)
+        r.params["contact"].slice("name", "email", "address", "phone", "linkedin", "notes")
+      end
+
+      # CONTACTS INDEX
+      r.is do
+        @contacts = @current_team.contacts
+
+        :contacts
+      end
+
+      # CONTACTS NEW
+      r.on "new" do
+        r.get do
+          @contact = Contact.new
+          :contacts_new
+        end
+
+        r.post do
+          @contact = Contact.new params(r)
+          @contact.team = @current_team
+          company_id = r.params.dig("company", "id")
+          @contact.company = @current_team.companies.with_hashid(company_id) if company_id
+
+          if @contact.save
+            r.redirect "/contacts"
+          else
+            :contacts_new
+          end
+        end
+      end
+
+      r.on String do |id|
+        @contact = @current_team.contacts.with_hashid(id)
+
+        if @contact.nil?
+          response.status = 404
+          r.halt
+        end
+
+        # CONTACTS EDIT
+        r.is "edit" do
+          # GET /contacts/:id/edit
+          r.get do
+            :contacts_edit
+          end
+
+          # POST /contacts/:id/edit
+          r.post do
+            if @contact.update params(r)
+              r.redirect "/contacts"
+            else
+              :contacts_edit
+            end
+          end
+        end
+
+        # CONTACTS DELETE
+        # POST /contacts/:id/delete
+        r.post "delete" do
+          @contact.delete
+          r.redirect "/contacts"
         end
       end
     end
