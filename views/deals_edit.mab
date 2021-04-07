@@ -1,0 +1,77 @@
+# DEALS EDIT VIEW
+form.w_sm.mx_auto action: "/deals/#{@deal.hashid}/edit", method: :post do
+  div.vstack.spacing.sm do
+    h1 "Edit Deal"
+    div { csrf_tag("/deals/#{@deal.hashid}/edit") }
+    div.error @error if @error
+
+    div.vstack.spacing.sm do
+      div.vstack.spacing.xxs do
+        fieldset.vstack.spacing.xxs do
+          label.vstack.spacing.xxs
+          span "Assignee"
+          select name: "user_id" do
+            @assignees.each do |a|
+              option value: a.hashid do
+                a.email
+              end
+            end
+          end
+        end
+
+        a href: "/users/new" do
+          "Invite a team member"
+        end
+      end
+
+      div.vstack.spacing.xxs do
+        fieldset do
+          label.vstack.spacing.xxs do
+            span "Stage"
+            select name: "stage_id" do
+              @stages.each do |s|
+                option value: s.hashid do
+                  s.name
+                end
+              end
+            end
+          end
+        end
+
+        a href: "/stages/new" do
+          "Add a stage"
+        end
+      end
+
+      fieldset do
+        label.vstack.spacing.xxs do
+          span "Status"
+          select name: "deal[status]" do
+            option value: "open", selected: @deal.closed_at.nil? do
+              "Open"
+            end
+            option value: "closed", selected: !@deal.closed_at.nil? do "Closed" end
+          end
+        end
+      end
+
+      fieldset do
+        label.vstack.spacing.xxs do
+          span "Value"
+          input type: "number", name: "deal[value]", value: 1_000
+        end
+      end
+
+      fieldset do
+        label.vstack.spacing.xxs do
+          span "Notes"
+          textarea name: "deal[notes]", rows: 10 do end
+        end
+      end
+
+      button.lg type: "submit" do
+        "Make a deal"
+      end
+    end
+  end
+end

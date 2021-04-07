@@ -26,6 +26,8 @@ div.vstack.spacing.md do
             th "LinkedIn"
             th "Website"
             th "Modified"
+            th "Notes"
+            th
           end
         end
         tbody do
@@ -41,6 +43,12 @@ div.vstack.spacing.md do
               td company.url
               td do
                 Time.at(company.updated_at).to_date.to_s if company.updated_at
+              end
+              td company.notes
+              td do
+                a href: "/companies/#{company.hashid}/edit" do
+                  "Edit"
+                end
               end
             end
           end

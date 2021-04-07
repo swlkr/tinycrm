@@ -5,4 +5,5 @@ class Team < Model
   one_to_many :users
   one_to_many :contacts
   one_to_many :companies
+  one_to_many :deals
 end

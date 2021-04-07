@@ -28,6 +28,7 @@ div.vstack.spacing.md do
             th "Stage"
             th "Modified"
             th "Value"
+            th
           end
         end
         tbody do
@@ -45,8 +46,15 @@ div.vstack.spacing.md do
               td deal.user&.email
               td deal.closed_at ? "Closed" : "Open"
               td stage&.name
-              td deal.updated_at
+              td do
+                Time.at(deal.updated_at).to_date.to_s if deal.updated_at
+              end
               td "$#{deal.value}"
+              td do
+                a href: "/deals/#{deal.hashid}/edit" do
+                  "Edit"
+                end
+              end
             end
           end
         end

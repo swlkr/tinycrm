@@ -491,6 +491,8 @@ nav button.link {
 
 table {
   border-collapse: collapse;
+  box-shadow: var(--shadow);
+  border-radius: var(--rounded-md);
 }
 
 thead {
@@ -517,3 +519,12 @@ thead th:first-child {
 thead th:last-child {
   border-top-right-radius: var(--rounded-md);
 }
+
+tbody tr:last-child td:first-child {
+  border-bottom-left-radius: var(--rounded-md);
+}
+
+tbody tr:last-child td:last-child {
+  border-bottom-right-radius: var(--rounded-md);
+}
+

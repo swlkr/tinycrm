@@ -117,48 +117,75 @@ class App < Roda
     # DEALS
     r.on "deals" do
       r.is do
-        r.get do
-          # DEALS /
-          @deals = Deal.where(team: @current_team)
-          :deals
-        end
+        # DEALS /
+        @deals = Deal.where(team: @current_team)
+        :deals
       end
 
-      r.is "new" do
+      r.on String do |id|
         @companies = Company.where(team: @current_team)
         @assignees = User.where(team: @current_team)
         @stages = Stage.where(team: @current_team)
 
-        # DEALS /NEW
-        r.get do
-          :deals_new
-        end
-
-        # DEALS /POST
-        r.post do
-          if r.params["company"] && r.params["company"]["name"]
-            company = Company.find_or_create(team_id: @current_team.id, name: r.params["company"]["name"])
-            company_params = r.params["company"].slice("notes", "url", "linkedin")
-            company.update(company_params)
+        if id == "new"
+          # DEALS /NEW
+          r.get do
+            :deals_new
           end
 
-          contact = @current_team.contacts_dataset.with_hashid(r.params["contact_id"]) if r.params["contact_id"]
-          user = @current_team.users_dataset.with_hashid(r.params["user_id"]) if r.params["user_id"]
-          stage = @current_team.stages_dataset.with_hashid(r.params["stage_id"]) if r.params["stage_id"]
+          # DEALS /POST
+          r.post do
+            if r.params["company"] && r.params["company"]["name"]
+              company = Company.find_or_create(team_id: @current_team.id, name: r.params["company"]["name"])
+              company_params = r.params["company"].slice("notes", "url", "linkedin")
+              company.update(company_params)
+            end
 
-          deal_params = r.params["deal"].slice("notes", "value")
+            contact = @current_team.contacts_dataset.with_hashid(r.params["contact_id"]) if r.params["contact_id"]
+            user = @current_team.users_dataset.with_hashid(r.params["user_id"]) if r.params["user_id"]
+            stage = @current_team.stages_dataset.with_hashid(r.params["stage_id"]) if r.params["stage_id"]
 
-          @deal = Deal.new(deal_params)
-          @deal.team = @current_team
-          @deal.company = company
-          @deal.user = user
-          @deal.contact = contact
+            deal_params = r.params["deal"].slice("notes", "value")
 
-          if @deal.save
-            @deal.add_stage(stage) if stage
-            r.redirect "/deals"
-          else
-            :deals_new
+            @deal = Deal.new(deal_params)
+            @deal.team = @current_team
+            @deal.company = company
+            @deal.user = user
+            @deal.contact = contact
+
+            if @deal.save
+              @deal.add_stage(stage) if stage
+              r.redirect "/deals"
+            else
+              :deals_new
+            end
+          end
+        end
+
+        r.is "edit" do
+          # DEALS EDIT
+          @deal = @current_team.deals.with_hashid(id)
+
+          r.get do
+            :deals_edit
+          end
+
+          r.post do
+            params = r.params["deal"].slice("value", "notes")
+            @deal.set(params)
+
+            if r.params["deal"]["status"] == "closed"
+              @deal.closed_at = Time.now.to_i
+            else
+              @deal.closed_at = nil
+            end
+
+            if @deal.valid?
+              @deal.save
+              r.redirect "/deals"
+            else
+              :deals_edit
+            end
           end
         end
       end
@@ -226,6 +253,27 @@ class App < Roda
       end
 
       r.on String do |id|
+        def company_params(params)
+          params["company"].slice("name", "linked_in", "url", "notes")
+        end
+
+        if id == "new"
+          r.get do
+            @company = Company.new
+            :companies_new
+          end
+
+          r.post do
+            @company = Company.new(company_params(r.params))
+
+            if @company.save
+              r.redirect "/companies"
+            else
+              :companies_new
+            end
+          end
+        end
+
         @company = Company.where(team: @current_team).with_hashid(id)
 
         # GET /companies/:hashid
@@ -241,12 +289,10 @@ class App < Roda
 
           # POST /companies/:hashid/edit
           r.post do
-            params = r.params["company"].slice("name", "linkedin", "url", "notes")
-            @company.set(params)
+            @company.set(company_params(r.params))
 
-            if @company.valid?
-              @company.save
-              r.redirect "/companies/#{@company.hashid}"
+            if @company.save
+              r.redirect "/companies"
             else
               :companies_edit
             end
