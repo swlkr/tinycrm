@@ -1,0 +1,29 @@
+# USERS EDIT VIEW
+div.vstack.spacing.md do
+  h1.text_center "Edit teammate"
+  form.w_sm.mx_auto action: "/users/#{@user.hashid}/edit", method: :post do
+    div { csrf_tag("/users/#{@user.hashid}/edit") }
+
+    div.vstack.spacing.sm do
+      div.vstack.spacing.xxs do
+        fieldset do
+          label.vstack.spacing.xxs do
+            span "Email"
+            input type: "text", name: "user[email]", value: @user.email
+          end
+        end
+
+        fieldset do
+          label.vstack.spacing.xxs do
+            span "Name"
+            input type: "text", name: "user[name]", value: @user.name
+          end
+        end
+      end
+
+      button.lg type: "submit" do
+        "Edit teammate"
+      end
+    end
+  end
+end

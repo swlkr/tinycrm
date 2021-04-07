@@ -1,5 +1,6 @@
 # USERS NEW VIEW
-div.vstack.mt_lg do
+div.vstack.spacing.md do
+  h1.text_center "Invite a teammate"
   form.w_sm.mx_auto action: "/users/new", method: :post do
     div { csrf_tag("/users/new") }
 
@@ -11,7 +12,17 @@ div.vstack.mt_lg do
             input type: "text", name: "user[email]"
           end
         end
-        div.error @user.errors[:name]&.first if @user.errors[:name]&.first
+
+        fieldset do
+          label.vstack.spacing.xxs do
+            span "Name"
+            input type: "text", name: "user[name]"
+          end
+        end
+
+        if email_error = @user.errors[:name]&.first
+          div.error email_error
+        end
       end
 
       button.lg type: "submit" do

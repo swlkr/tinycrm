@@ -455,8 +455,6 @@ th, td {
   grid-template-columns: 200px 1fr;
   grid-template-rows: auto 1fr;
   grid-gap: 10px;
-
-  height: 100vh;
 }
 
 header {
@@ -464,6 +462,9 @@ header {
 }
 
 nav {
+  height: 100vh;
+  position: fixed;
+  width: 200px;
   grid-area: nav;
 }
 

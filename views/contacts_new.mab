@@ -5,6 +5,25 @@ div.vstack.spacing.md do
     div { csrf_tag("/contacts/new") }
 
     div.vstack.spacing.sm do
+      div.vstack.spacing.xxs do
+        fieldset do
+          label.vstack.spacing.xxs do
+            span "Company"
+            select name: "company[id]" do
+              @companies.each do |c|
+                option value: c.hashid do
+                  c.name
+                end
+              end
+            end
+          end
+        end
+
+        a href: "/companies/new" do
+          "Add a new company this contact works for"
+        end
+      end
+
       fieldset do
         label.vstack.spacing.xxs do
           span "Name"

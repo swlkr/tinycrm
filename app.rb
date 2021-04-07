@@ -123,14 +123,15 @@ class App < Roda
     r.on "deals" do
       r.is do
         # DEALS /
-        @deals = Deal.where(team: @current_team)
+        @deals = @current_team.deals
         :deals
       end
 
       r.on String do |id|
-        @companies = Company.where(team: @current_team)
-        @assignees = User.where(team: @current_team)
-        @stages = Stage.where(team: @current_team)
+        @companies = @current_team.companies
+        @users = @current_team.users
+        @stages = @current_team.stages
+        @contacts = @current_team.contacts
 
         if id == "new"
           # DEALS /NEW
@@ -140,15 +141,10 @@ class App < Roda
 
           # DEALS /POST
           r.post do
-            if r.params["company"] && r.params["company"]["name"]
-              company = Company.find_or_create(team_id: @current_team.id, name: r.params["company"]["name"])
-              company_params = r.params["company"].slice("notes", "url", "linkedin")
-              company.update(company_params)
-            end
-
-            contact = @current_team.contacts_dataset.with_hashid(r.params["contact_id"]) if r.params["contact_id"]
-            user = @current_team.users_dataset.with_hashid(r.params["user_id"]) if r.params["user_id"]
-            stage = @current_team.stages_dataset.with_hashid(r.params["stage_id"]) if r.params["stage_id"]
+            company = @current_team.companies.with_hashid(r.params["company_id"]) if r.params["company_id"]
+            contact = @current_team.contacts.with_hashid(r.params["contact_id"]) if r.params["contact_id"]
+            user = @current_team.users.with_hashid(r.params["user_id"]) if r.params["user_id"]
+            stage = @current_team.stages.with_hashid(r.params["stage_id"]) if r.params["stage_id"]
 
             deal_params = r.params["deal"].slice("notes", "value")
 
@@ -224,26 +220,55 @@ class App < Roda
     # TEAM MEMBERS
     # USERS
     r.on "users" do
+      def params(r)
+        r.params["user"].slice("email", "name")
+      end
+
+      r.is do
+        @users = @current_team.users
+        :users
+      end
+
       r.is "new" do
+        # GET /users/new
         r.get do
-          # USERS NEW GET
           @user = User.new
           :users_new
         end
 
         r.post do
           # USERS NEW POST
-          params = r.params["user"].slice("email")
-          @user = User.new(params)
+          @user = User.new params(r)
           @user.team = @current_team
 
-          # TODO email user invite email
+          # TODO email user invite email ?
 
           if @user.valid?
             @user.save
             r.redirect "/deals/new"
           else
             :users_new
+          end
+        end
+      end
+
+      r.on String do |id|
+        r.is "edit" do
+          @user = @current_team.users.with_hashid(id)
+
+          r.get do
+            :users_edit
+          end
+
+          r.post do
+            @user.set(params(r))
+
+            if @user.valid?
+              @user.save
+              r.redirect "/users"
+            else
+              :users_edit
+            end
           end
         end
       end
@@ -258,8 +283,8 @@ class App < Roda
       end
 
       r.on String do |id|
-        def company_params(params)
-          params["company"].slice("name", "linked_in", "url", "notes")
+        def params(r)
+          r.params["company"].slice("name", "linked_in", "url", "notes")
         end
 
         if id == "new"
@@ -269,9 +294,11 @@ class App < Roda
           end
 
           r.post do
-            @company = Company.new(company_params(r.params))
+            @company = Company.new params(r)
+            @company.team = @current_team
 
-            if @company.save
+            if @company.valid?
+              @company.save
               r.redirect "/companies"
             else
               :companies_new
@@ -279,7 +306,7 @@ class App < Roda
           end
         end
 
-        @company = Company.where(team: @current_team).with_hashid(id)
+        @company = @current_team.companies.with_hashid(id)
 
         # GET /companies/:hashid
         r.is do
@@ -294,9 +321,10 @@ class App < Roda
 
           # POST /companies/:hashid/edit
           r.post do
-            @company.set(company_params(r.params))
+            @company.set params(r)
 
-            if @company.save
+            if @company.valid?
+              @company.save
               r.redirect "/companies"
             else
               :companies_edit
@@ -308,32 +336,36 @@ class App < Roda
 
     # CONTACTS
     r.on "contacts" do
-
       def params(r)
         r.params["contact"].slice("name", "email", "address", "phone", "linkedin", "notes")
       end
 
-      # CONTACTS INDEX
+      # GET /contacts
       r.is do
         @contacts = @current_team.contacts
-
         :contacts
       end
 
-      # CONTACTS NEW
       r.on "new" do
+        @companies = @current_team.companies
+
+        # CONTACTS NEW
+        # GET /contacts/new
         r.get do
           @contact = Contact.new
           :contacts_new
         end
 
+        # CONTACTS CREATE
+        # POST /contacts/new
         r.post do
           @contact = Contact.new params(r)
           @contact.team = @current_team
           company_id = r.params.dig("company", "id")
           @contact.company = @current_team.companies.with_hashid(company_id) if company_id
 
-          if @contact.save
+          if @contact.valid?
+            @contact.save
             r.redirect "/contacts"
           else
             :contacts_new

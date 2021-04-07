@@ -1,0 +1,51 @@
+# USERS INDEX VIEW
+div.vstack.spacing.md do
+  if @users.any?
+    div.hstack.space_between do
+      h1 "Users"
+      a.button href: "/users/new" do
+        "Invite a teammate"
+      end
+    end
+  else
+    div.vstack.mt_2xl.spacing.sm.text_center do
+      p "You don't have any teammates yet. Always be friending!"
+      a.button.w_fit_content.mx_auto href: "/users/new" do
+        "Invite a teammate"
+      end
+    end
+  end
+
+  unless @users.empty?
+    div.vstack do
+      table do
+        thead do
+          tr do
+            th "Name"
+            th "Created"
+            th "Email"
+            th "Modified"
+            th
+          end
+        end
+        tbody do
+          @users.each do |user|
+            tr do
+              td user.name
+              td Time.at(user.created_at).to_date.to_s
+              td user.email
+              td do
+                Time.at(user.updated_at).to_date.to_s if user.updated_at
+              end
+              td do
+                a href: "/users/#{user.hashid}/edit" do
+                  "Edit"
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end

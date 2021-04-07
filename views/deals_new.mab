@@ -6,42 +6,43 @@ form.w_sm.mx_auto action: "/deals/new", method: :post do
     div.error @error if @error
 
     div.vstack.spacing.sm do
-      fieldset do
-        label.vstack.spacing.xxs do
-          span "Company name"
-          input type: "text", name: "company[name]"
+      div.vstack.spacing.xxs do
+        fieldset do
+          label.vstack.spacing.xxs do
+            span "Company"
+            select name: "company_id" do
+              @companies.each do |c|
+                option(value: c.hashid) { c.name }
+              end
+            end
+          end
         end
-      end
 
-      fieldset do
-        label.vstack.spacing.xxs do
-          span "Company LinkedIn"
-          input type: "text", name: "company[linkedin]"
-        end
-      end
-
-      fieldset do
-        label.vstack.spacing.xxs do
-          span "Company Website"
-          input type: "text", name: "company[url]"
-        end
-      end
-
-      fieldset do
-        label.vstack.spacing.xxs do
-          span "Company Notes"
-          textarea name: "company[notes]", rows: 10 do end
-        end
+        a href: "/companies/new" do "Add a company" end
       end
 
       div.vstack.spacing.xxs do
-        fieldset.vstack.spacing.xxs do
-          label.vstack.spacing.xxs
-          span "Assignee"
-          select name: "user_id" do
-            @assignees.each do |a|
-              option value: a.hashid do
-                a.email
+        fieldset do
+          label.vstack.spacing.xxs do
+            span "Primary contact"
+            select name: "contact_id" do
+              @contacts.each do |c|
+                option(value: c.hashid) { c.name }
+              end
+            end
+          end
+        end
+
+        a href: "/contacts/new" do "Add a primary contact" end
+      end
+
+      div.vstack.spacing.xxs do
+        fieldset do
+          label.vstack.spacing.xxs do
+            span "Assignee"
+            select name: "user_id" do
+              @users.each do |u|
+                option(value: u.hashid) { u.email }
               end
             end
           end
@@ -58,9 +59,7 @@ form.w_sm.mx_auto action: "/deals/new", method: :post do
             span "Stage"
             select name: "stage_id" do
               @stages.each do |s|
-                option value: s.hashid do
-                  s.name
-                end
+                option(value: s.hashid) { s.name }
               end
             end
           end
@@ -74,20 +73,18 @@ form.w_sm.mx_auto action: "/deals/new", method: :post do
       fieldset do
         label.vstack.spacing.xxs do
           span "Value"
-          input type: "number", name: "deal[value]", value: 1_000
+          input(type: "number", name: "deal[value]", value: 1_000)
         end
       end
 
       fieldset do
         label.vstack.spacing.xxs do
           span "Notes"
-          textarea name: "deal[notes]", rows: 10 do end
+          textarea(name: "deal[notes]", rows: 10) {}
         end
       end
 
-      button.lg type: "submit" do
-        "Make a deal"
-      end
+      button.lg type: "submit" do "Make a deal" end
     end
   end
 end
