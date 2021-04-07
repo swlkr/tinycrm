@@ -1,0 +1,47 @@
+# COMPANIES EDIT VIEW
+div.vstack.spacing.md do
+  h1.text_center "Edit Company"
+  form.w_sm.mx_auto action: "/companies/#{@company.hashid}/edit", method: :post do
+    div { csrf_tag("/companies/#{@company.hashid}/edit") }
+
+    div.vstack.spacing.sm do
+      fieldset do
+        label.vstack.spacing.xxs do
+          span "Name"
+          input type: "text", name: "company[name]", value: @company.name
+          div.error @company&.errors[:name]&.first if @company&.errors[:name]&.first
+        end
+      end
+
+      fieldset do
+        label.vstack.spacing.xxs do
+          span "LinkedIn"
+          input type: "text", name: "company[linkedin]", value: @company.linkedin
+          div.error @company&.errors[:linkedin]&.first if @company&.errors[:linkedin]&.first
+        end
+      end
+
+      fieldset do
+        label.vstack.spacing.xxs do
+          span "Website"
+          input type: "text", name: "company[url]", value: @company.url
+          div.error @company&.errors[:url]&.first if @company&.errors[:url]&.first
+        end
+      end
+
+      fieldset do
+        label.vstack.spacing.xxs do
+          span "Notes"
+          textarea name: "company[notes]", rows: 10 do
+            @company.notes
+          end
+          div.error @company&.errors[:notes]&.first if @company&.errors[:notes]&.first
+        end
+      end
+
+      button.lg type: "submit" do
+        "Save company"
+      end
+    end
+  end
+end

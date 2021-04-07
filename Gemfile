@@ -10,5 +10,6 @@ gem "listen"
 gem "zeitwerk"
 gem "dotenv-rails"
 gem "rack"
-
+gem "sequel-hash_id"
 gem "sqlite3", "~> 1.4"
+gem "pry", "~> 0.13.1"

@@ -35,11 +35,7 @@ class App < Roda
     r.public
     check_csrf!
     @current_user = User.first(id: r.session['user_id'])
-    @current_team = if @current_user
-                      Team[@current_user[:team_id]]
-                    else
-                      {}
-                    end
+    @current_team = @current_user&.team
 
     r.root do
       view "root"
@@ -61,28 +57,23 @@ class App < Roda
         email = r.params["email"]
 
         if email&.include?("@")
-          domain = r.params["email"].split("@").last
-
           token = SecureRandom.hex(16)
           token_expires_at = Time.now.to_i + 600
 
-          user_id = User.insert_conflict(
-            target: :email,
-            update: {
-              token: token,
-              token_expires_at: token_expires_at
-            }
-          ).insert(
-            email: email,
-            token: token,
-            token_expires_at: token_expires_at
-          )
+          user = User.find_or_create(email: email)
+          user.token = token
+          user.token_expires_at = token_expires_at
+          user.save
 
-          user = User.first(email: email)
+          team = user.team || Team.create(name: "My team")
 
-          unless user[:team_id]
-            team_id = Team.insert(name: "My team")
-            user.update(team_id: team_id)
+          if user.team.nil?
+            user.team = team
+            user.save
+          end
+
+          %w[follow-up qualified demo negotiation won lost unqualified].each do |name|
+            Stage.find_or_create(team: team, name: name)
           end
 
           r.redirect "gotmail"
@@ -95,6 +86,10 @@ class App < Roda
     end
 
     # LOGIN GET
+    r.get "login" do
+      :login
+    end
+
     r.get "login", String do |token|
       user = User.first Sequel.lit("token = ? and token_expires_at > ?", token, Time.now.to_i)
 
@@ -113,49 +108,64 @@ class App < Roda
       r.halt
     end
 
+    # LOGOUT
+    r.post "logout" do
+      r.session.delete("user_id")
+      r.redirect "/"
+    end
+
     # DEALS
     r.on "deals" do
       r.is do
         r.get do
-          # DEALS GET
-          @deals = Deal.where(team_id: @current_user[:team_id])
+          # DEALS /
+          @deals = Deal.where(team: @current_team)
           :deals
         end
       end
 
       r.is "new" do
-        # DEALS NEW
+        @companies = Company.where(team: @current_team)
+        @assignees = User.where(team: @current_team)
+        @stages = Stage.where(team: @current_team)
+
+        # DEALS /NEW
         r.get do
-          @assignees = User.where(team_id: @current_user[:team_id])
-          @stages = Stage.where(team_id: @current_user[:team_id])
           :deals_new
         end
 
-        # DEALS POST
+        # DEALS /POST
         r.post do
-          company = Company.insert_conflict.insert(r.params["company"]) if r.params["company"]
-          contact = Contact.insert_conflict.insert(r.params["contact"]) if r.params["contact"]
+          if r.params["company"] && r.params["company"]["name"]
+            company = Company.find_or_create(team_id: @current_team.id, name: r.params["company"]["name"])
+            company_params = r.params["company"].slice("notes", "url", "linkedin")
+            company.update(company_params)
+          end
 
-          deal = Deal.insert(
-            company_id: company ? company[:id] : nil,
-            assigned_to: r.params["assignee"],
-            team_id: @current_user[:team_id],
-            contact_id: contact ? contact[:id] : nil
-          )
+          contact = @current_team.contacts_dataset.with_hashid(r.params["contact_id"]) if r.params["contact_id"]
+          user = @current_team.users_dataset.with_hashid(r.params["user_id"]) if r.params["user_id"]
+          stage = @current_team.stages_dataset.with_hashid(r.params["stage_id"]) if r.params["stage_id"]
+
+          deal_params = r.params["deal"].slice("notes", "value")
+
+          @deal = Deal.new(deal_params)
+          @deal.team = @current_team
+          @deal.company = company
+          @deal.user = user
+          @deal.contact = contact
+
+          if @deal.save
+            @deal.add_stage(stage) if stage
+            r.redirect "/deals"
+          else
+            :deals_new
+          end
         end
       end
     end
 
     # STAGES
     r.on "stages" do
-      r.is do
-        r.get do
-          # STAGES GET
-          @stages = Stage.where(team_id: @current_team[:id])
-          :stages
-        end
-      end
-
       r.is "new" do
         r.get do
           # STAGES NEW
@@ -164,7 +174,9 @@ class App < Roda
         end
 
         r.post do
-          @stage = Stage.new(r.params["stage"])
+          # STAGES NEW POST
+          params = r.params["stage"].slice("name")
+          @stage = Stage.new(params)
           @stage.team = @current_team
 
           if @stage.valid?
@@ -172,6 +184,72 @@ class App < Roda
             r.redirect "/deals/new"
           else
             :stages_new
+          end
+        end
+      end
+    end
+
+    # TEAM MEMBERS
+    # USERS
+    r.on "users" do
+      r.is "new" do
+        r.get do
+          # USERS NEW GET
+          @user = User.new
+          :users_new
+        end
+
+        r.post do
+          # USERS NEW POST
+          params = r.params["user"].slice("email")
+          @user = User.new(params)
+          @user.team = @current_team
+
+          # TODO email user invite email
+
+          if @user.valid?
+            @user.save
+            r.redirect "/deals/new"
+          else
+            :users_new
+          end
+        end
+      end
+    end
+
+    # COMPANIES
+    r.on "companies" do
+      # GET /companies
+      r.is do
+        @companies = @current_team.companies
+        :companies
+      end
+
+      r.on String do |id|
+        @company = Company.where(team: @current_team).with_hashid(id)
+
+        # GET /companies/:hashid
+        r.is do
+          :company
+        end
+
+        r.is "edit" do
+          # GET /companies/:hashid/edit
+          r.get do
+            :companies_edit
+          end
+
+          # POST /companies/:hashid/edit
+          r.post do
+            params = r.params["company"].slice("name", "linkedin", "url", "notes")
+            @company.set(params)
+
+            if @company.valid?
+              @company.save
+              r.redirect "/companies/#{@company.hashid}"
+            else
+              :companies_edit
+            end
           end
         end
       end

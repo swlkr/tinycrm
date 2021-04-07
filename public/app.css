@@ -108,16 +108,17 @@ button {
   --black: #1D2A3C;
   --dark-gray: #343C46;
   --gray: #727682;
-  --light-gray: #ccc;
+  --light-gray: #eee;
   --white: #fff;
+  --light-purple: rgb(128, 96, 239, 0.2);
 
-  /* sizes */
+  /* SIZES */
   --size-4: 0.5rem;
   --size-5: 1.0rem;
   --size-6: 1.5rem;
   --size-7: 2.0rem;
 
-  # WIDTHS
+  /* WIDTHS */
   --width-xs: 20rem;
   --width-sm: 24rem;
   --width-md: 28rem;
@@ -211,6 +212,10 @@ input[type="hidden"], [hidden] {
   margin-bottom: 0;
 }
 
+.hstack.spacing.xs > * {
+  margin-right: var(--spacing-xs);
+}
+
 .hstack.spacing.sm > * {
   margin-right: var(--spacing-s);
 }
@@ -235,7 +240,7 @@ input[type="text"]:focus,
 input[type="email"]:focus,
 input[type="password"]:focus,
 input[type="number"]:focus {
-  border-color: var(--blue);
+  border-color: var(--purple);
   box-shadow: var(--shadow);
 }
 
@@ -254,12 +259,12 @@ fieldset label {
 }
 
 fieldset:focus-within {
-  border-color: var(--blue);
+  border-color: var(--purple);
   box-shadow: var(--shadow);
 }
 
 fieldset:focus-within label {
-  color: var(--blue);
+  color: var(--purple);
 }
 
 fieldset input[type="text"],
@@ -302,7 +307,7 @@ button, .button {
   border: none;
   border-radius: var(--rounded-lg);
   color: var(--white);
-  background-color: var(--blue);
+  background-color: var(--purple);
   padding: var(--spacing-s);
   display: block;
   box-shadow: var(--shadow);
@@ -323,28 +328,33 @@ button:hover {
 }
 
 .field:focus-within label {
-  color: var(--blue);
+  color: var(--purple);
 }
 
 .error {
   color: var(--red);
 }
 
-a {
+a, .link {
   text-decoration: none;
-  color: var(--blue);
+  color: var(--purple);
 }
 
-a:hover {
-  text-decoration: underline;
+.link {
+  font-size: inherit;
+  cursor: pointer;
 }
 
 a.button:hover {
   text-decoration: none;
 }
 
-.p_y_sm {
-  padding: var(--spacing-s) 0;
+.px_sm {
+  padding: 0 var(--spacing-s);
+}
+
+.py_md {
+  padding: var(--spacing-m) 0;
 }
 
 .container {
@@ -377,4 +387,133 @@ a.button:hover {
 
 .w_fit_content {
   width: fit-content;
+}
+
+.max_w_xl {
+  width: var(--width-xl);
+}
+
+th, td {
+  text-align: left
+}
+
+.space_between {
+  justify-content: space-between;
+}
+
+.shadow {
+  box-shadow: var(--shadow);
+}
+
+.blue {
+  color: var(--blue);
+}
+
+.gray {
+  color: var(--gray);
+}
+
+.p_md {
+  padding: var(--spacing-m);
+}
+
+.p_sm {
+  padding: var(--spacing-s);
+}
+
+.border_right {
+  border-right: solid 1px;
+}
+
+.border_light_gray {
+  border-color: var(--light-gray);
+}
+
+.card {
+  border: solid 1px var(--light-gray);
+  border-radius: var(--rounded-lg);
+}
+
+.margin_right_xs {
+  margin-right: var(--spacing-xs);
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding-left: var(--spacing-s);
+    padding-right: var(--spacing-s);
+  }
+}
+
+.main {
+  display: grid;
+
+  grid-template-areas:
+    "nav header"
+    "nav content";
+
+  grid-template-columns: 200px 1fr;
+  grid-template-rows: auto 1fr;
+  grid-gap: 10px;
+
+  height: 100vh;
+}
+
+header {
+  grid-area: header;
+}
+
+nav {
+  grid-area: nav;
+}
+
+.content {
+  grid-area: content;
+}
+
+nav a, nav .link {
+  color: var(--dark-gray);
+  text-decoration: none;
+}
+
+nav a.active, nav .link.active {
+  color: var(--white);
+  background-color: var(--purple);
+}
+
+nav button.link {
+  border: none;background: none;box-shadow: none;width: 100%;
+}
+
+.purple {
+  color: var(--purple);
+}
+
+table {
+  border-collapse: collapse;
+}
+
+thead {
+  background-color: var(--purple);
+  color: var(--white);
+}
+
+th, td {
+  padding: var(--spacing-s);
+}
+
+tr:nth-child(even) {
+  background-color: var(--light-gray);
+}
+
+tr:hover {
+  background-color: var(--light-purple);
+}
+
+thead th:first-child {
+  border-top-left-radius: var(--rounded-md);
+}
+
+thead th:last-child {
+  border-top-right-radius: var(--rounded-md);
 }

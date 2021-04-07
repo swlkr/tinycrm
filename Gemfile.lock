@@ -29,6 +29,7 @@ GEM
       railties (>= 3.2)
     erubi (1.10.0)
     ffi (1.15.0)
+    hashids (1.0.5)
     i18n (1.8.10)
       concurrent-ruby (~> 1.0)
     listen (3.5.1)
@@ -71,6 +72,9 @@ GEM
     roda (3.42.0)
       rack
     sequel (5.43.0)
+    sequel-hash_id (0.1.2)
+      hashids (~> 1.0)
+      sequel (>= 4.0, < 6.0)
     sqlite3 (1.4.2)
     thor (1.1.0)
     tilt (2.0.10)
@@ -90,6 +94,7 @@ DEPENDENCIES
   rack-console
   roda
   sequel
+  sequel-hash_id
   sqlite3 (~> 1.4)
   tilt
   zeitwerk

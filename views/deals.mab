@@ -1,25 +1,56 @@
 # DEALS VIEW
-if @deals.any?
-  div.hstack.justify_right do
-    a.button href: "/deals/new" do
-      "New Deal"
-    end
-  end
-else
-  div.vstack.mt_2xl.spacing.sm.text_center do
-    p "You haven't made any deals yet, always be closing!"
-    a.button.w_fit_content.mx_auto href: "/deals/new" do
-      "New Deal"
-    end
-  end
-end
-
-div.vstack.mt_2xl do
-  ul do
-    @deals.each do |deal|
-      li do
-        deal.company.name
+div.vstack.spacing.md do
+  if @deals.any?
+    div.hstack.space_between do
+      h1 "Deals"
+      a.button href: "/deals/new" do
+        "New Deal"
       end
-    end unless @deals.empty?
+    end
+  else
+    div.vstack.mt_2xl.spacing.sm.text_center do
+      p "You haven't made any deals yet, always be closing!"
+      a.button.w_fit_content.mx_auto href: "/deals/new" do
+        "New Deal"
+      end
+    end
+  end
+
+  unless @deals.empty?
+    div.vstack do
+      table do
+        thead do
+          tr do
+            th "Company"
+            th "Created"
+            th "Assigned"
+            th "Status"
+            th "Stage"
+            th "Modified"
+            th "Value"
+          end
+        end
+        tbody do
+          @deals.each do |deal|
+            stage = deal.stages_dataset.order("stages.created_at desc").first
+            company = deal.company
+
+            tr do
+              td do
+                a href: "/companies/#{company.hashid}" do
+                  span company.name
+                end
+              end
+              td Time.at(deal.created_at).to_date.to_s
+              td deal.user&.email
+              td deal.closed_at ? "Closed" : "Open"
+              td stage&.name
+              td deal.updated_at
+              td "$#{deal.value}"
+            end
+          end
+        end
+      end
+    end
   end
 end

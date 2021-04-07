@@ -1,0 +1,16 @@
+# SIGNUP VIEW
+div.vstack.mt_2xl do
+  form.w_sm.mx_auto action: "/signup", method: "post" do
+    div.vstack.spacing.xs do
+      div { csrf_tag("/signup") }
+      div.field.vstack.spacing.xs do
+        label for: "email" do "Enter your email" end
+        input type: "email", name: "email"
+        div.error @error if @error
+      end
+      button.lg type: "submit" do
+        "Login"
+      end
+    end
+  end
+end

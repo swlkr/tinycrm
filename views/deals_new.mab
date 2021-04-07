@@ -1,14 +1,36 @@
 # DEALS_NEW VIEW
-div.vstack.mt_lg do
-  form.w_sm.mx_auto action: "/deals/new", method: :post do
+form.w_sm.mx_auto action: "/deals/new", method: :post do
+  div.vstack.spacing.sm do
+    h1 "New Deal"
     div { csrf_tag("/deals/new") }
     div.error @error if @error
 
     div.vstack.spacing.sm do
       fieldset do
         label.vstack.spacing.xxs do
-          span "Company"
-          input type: "text", name: "company"
+          span "Company name"
+          input type: "text", name: "company[name]"
+        end
+      end
+
+      fieldset do
+        label.vstack.spacing.xxs do
+          span "Company LinkedIn"
+          input type: "text", name: "company[linkedin]"
+        end
+      end
+
+      fieldset do
+        label.vstack.spacing.xxs do
+          span "Company Website"
+          input type: "text", name: "company[url]"
+        end
+      end
+
+      fieldset do
+        label.vstack.spacing.xxs do
+          span "Company Notes"
+          textarea name: "company[notes]", rows: 10 do end
         end
       end
 
@@ -16,10 +38,10 @@ div.vstack.mt_lg do
         fieldset.vstack.spacing.xxs do
           label.vstack.spacing.xxs
           span "Assignee"
-          select name: "assignee" do
+          select name: "user_id" do
             @assignees.each do |a|
-              option value: a[:id] do
-                a[:email]
+              option value: a.hashid do
+                a.email
               end
             end
           end
@@ -34,10 +56,10 @@ div.vstack.mt_lg do
         fieldset do
           label.vstack.spacing.xxs do
             span "Stage"
-            select name: "stage" do
-              @stages.each do |a|
-                option value: a[:id] do
-                  a[:name]
+            select name: "stage_id" do
+              @stages.each do |s|
+                option value: s.hashid do
+                  s.name
                 end
               end
             end
@@ -52,14 +74,14 @@ div.vstack.mt_lg do
       fieldset do
         label.vstack.spacing.xxs do
           span "Value"
-          input type: "number", name: "value", value: 1_000
+          input type: "number", name: "deal[value]", value: 1_000
         end
       end
 
       fieldset do
         label.vstack.spacing.xxs do
           span "Notes"
-          textarea name: "notes", rows: 10 do end
+          textarea name: "deal[notes]", rows: 10 do end
         end
       end
 

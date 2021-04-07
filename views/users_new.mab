@@ -1,0 +1,22 @@
+# USERS NEW VIEW
+div.vstack.mt_lg do
+  form.w_sm.mx_auto action: "/users/new", method: :post do
+    div { csrf_tag("/users/new") }
+
+    div.vstack.spacing.sm do
+      div.vstack.spacing.xxs do
+        fieldset do
+          label.vstack.spacing.xxs do
+            span "Email"
+            input type: "text", name: "user[email]"
+          end
+        end
+        div.error @user.errors[:name]&.first if @user.errors[:name]&.first
+      end
+
+      button.lg type: "submit" do
+        "Invite a team member"
+      end
+    end
+  end
+end

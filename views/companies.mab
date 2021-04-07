@@ -1,0 +1,51 @@
+# COMPANIES / VIEW
+div.vstack.spacing.md do
+  if @companies.any?
+    div.hstack.space_between do
+      h1 "Companies"
+      a.button href: "/companies/new" do
+        "New Company"
+      end
+    end
+  else
+    div.vstack.mt_2xl.spacing.sm.text_center do
+      p "You haven't contact any companies yet, always be closing!"
+      a.button.w_fit_content.mx_auto href: "/companies/new" do
+        "New Company"
+      end
+    end
+  end
+
+  unless @companies.empty?
+    div.vstack do
+      table do
+        thead do
+          tr do
+            th "Name"
+            th "Created"
+            th "LinkedIn"
+            th "Website"
+            th "Modified"
+          end
+        end
+        tbody do
+          @companies.each do |company|
+            tr do
+              td do
+                a href: "/companies/#{company.hashid}" do
+                  span company.name
+                end
+              end
+              td Time.at(company.created_at).to_date.to_s
+              td company.linkedin
+              td company.url
+              td do
+                Time.at(company.updated_at).to_date.to_s if company.updated_at
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end
