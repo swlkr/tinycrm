@@ -72,10 +72,6 @@ class App < Roda
             user.save
           end
 
-          %w[follow-up qualified demo negotiation won lost unqualified].each do |name|
-            Stage.find_or_create(team: team, name: name)
-          end
-
           r.redirect "gotmail"
         else
           response.status == 422
@@ -91,7 +87,12 @@ class App < Roda
         user = User.first Sequel.lit("token = ? and token_expires_at > ?", token, Time.now.to_i)
 
         if user
-          user.update token: nil, token_expires_at: nil
+          # create these on first login only
+          %w[follow-up qualified demo negotiation won lost unqualified].each do |name|
+            Stage.find_or_create(team: user.team, name: name, color: "#{rand(0..190)},#{rand(0..190)},#{rand(0..190)}")
+          end unless user.last_login_at
+
+          user.update token: nil, token_expires_at: nil, last_login_at: Time.now.to_i
           r.session["user_id"] = user[:id]
           r.redirect "/deals"
         else
@@ -178,7 +179,6 @@ class App < Roda
 
         r.is "edit" do
           @deal = @current_team.deals.with_hashid(id)
-          @contacts = @deal.company.contacts
 
           # GET /deals/:id/edit
           # DEALS EDIT
@@ -196,6 +196,7 @@ class App < Roda
 
             params = r.params.slice("value", "notes")
             @deal.set params
+            @deal.company = company
             @deal.contact = contact
             @deal.user = user
             @deal.stage = stage
@@ -429,6 +430,7 @@ class App < Roda
 
       r.on String do |id|
         @contact = @current_team.contacts.with_hashid(id)
+        @companies = @current_team.companies
 
         if @contact.nil?
           response.status = 404
@@ -446,6 +448,7 @@ class App < Roda
           # POST /contacts/:id/edit
           r.post do
             @contact.set params(r)
+            @contact.company = @companies.with_hashid(r.params["company_id"]) if r.params["company_id"]
 
             if @contact.valid?
               @contact.save

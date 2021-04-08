@@ -41,10 +41,12 @@ div.vstack.spacing.md do
               end
               td do
                 div.hstack.spacing.xs do
-                  span "$#{company.deals.first.value}"
-                  span.badge "#{company.deals.first.stage.name}"
+                  span.green "$#{company.deals.first.value}"
+                  span.badge style: "background-color: rgba(#{company.deals.first.stage.color}, 0.1); color: rgb(#{company.deals.first.stage.color})" do
+                    span "#{company.deals.first.stage.name}"
+                  end
                   span "#{company.deals.first.status}"
-                end
+                end unless company.deals.empty?
               end
               td Time.at(company.created_at).to_date.to_s
               td company.linkedin

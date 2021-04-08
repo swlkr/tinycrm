@@ -27,7 +27,9 @@ form.w_sm.mx_auto action: "/deals/new", method: :post do
             span "Primary contact"
             select name: "contact_id" do
               @contacts.each do |c|
-                option(value: c.hashid) { c.name }
+                option(value: c.hashid) do
+                  span "#{c.name} (#{c.company.name})"
+                end
               end
             end
           end

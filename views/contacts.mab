@@ -41,8 +41,8 @@ div.vstack.spacing.md do
                 end
               end
               td do
-                a href: "/companies/#{contact.company.hashid}/edit" do
-                  span contact.company.name
+                a href: "/companies/#{contact.company&.hashid}/edit" do
+                  span contact.company&.name
                 end
               end
               td Time.at(contact.created_at).to_date.to_s

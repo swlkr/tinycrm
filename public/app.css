@@ -490,6 +490,10 @@ nav button.link {
   color: var(--purple);
 }
 
+.bg_light_purple {
+  background-color: var(--light-purple);
+}
+
 table {
   border-collapse: collapse;
   box-shadow: var(--shadow);
@@ -530,8 +534,6 @@ tbody tr:last-child td:last-child {
 }
 
 .badge {
-  background-color: var(--light-purple);
-  color: var(--purple);
   padding: var(--spacing-xs);
   border-radius: var(--rounded-lg);
 }

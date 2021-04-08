@@ -32,7 +32,9 @@ div.vstack.spacing.md do
           @stages.each do |stage|
             tr do
               td do
-                span.badge stage.name
+                span.badge(style: "background-color: rgba(#{stage.color}, 0.15); color: rgb(#{stage.color})") do
+                  span stage.name
+                end
               end
               td stage.deals.count
               td Time.at(stage.created_at).to_date.to_s

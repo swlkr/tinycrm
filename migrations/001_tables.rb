@@ -14,6 +14,7 @@ Sequel.migration do
       String :email, null: false, unique: true
       String :token
       Integer :token_expires_at
+      Integer :last_login_at
       Integer :updated_at
       Integer :created_at, null: false, default: Sequel.lit("strftime('%s', 'now')")
     end
@@ -22,6 +23,7 @@ Sequel.migration do
       primary_key :id
       foreign_key :team_id, :teams, on_delete: :cascade
       String :name, null: false, unique: true
+      String :color
       Integer :updated_at
       Integer :created_at, null: false, default: Sequel.lit("strftime('%s', 'now')")
     end
