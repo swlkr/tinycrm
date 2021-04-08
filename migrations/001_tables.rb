@@ -57,17 +57,10 @@ Sequel.migration do
       foreign_key :company_id, :companies, on_delete: :set_null
       foreign_key :contact_id, :contacts, on_delete: :set_null
       foreign_key :user_id, :users, on_delete: :set_null
+      foreign_key :stage_id, :stages, on_delete: :set_null
       Float :value, null: false, default: Sequel.lit("0.0")
       Integer :closed_at
       String :notes
-      Integer :updated_at
-      Integer :created_at, null: false, default: Sequel.lit("strftime('%s', 'now')")
-    end
-
-    create_table(:deals_stages) do
-      primary_key :id
-      foreign_key :deal_id, :deals, on_delete: :cascade
-      foreign_key :stage_id, :stages
       Integer :updated_at
       Integer :created_at, null: false, default: Sequel.lit("strftime('%s', 'now')")
     end

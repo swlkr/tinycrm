@@ -22,6 +22,7 @@ div.vstack.spacing.md do
         thead do
           tr do
             th "Name"
+            th "Company"
             th "Created"
             th "LinkedIn"
             th "Email"
@@ -35,8 +36,13 @@ div.vstack.spacing.md do
           @contacts.each do |contact|
             tr do
               td do
-                a href: "/contacts/#{contact.hashid}" do
+                a href: "/contacts/#{contact.hashid}/edit" do
                   span contact.name
+                end
+              end
+              td do
+                a href: "/companies/#{contact.company.hashid}/edit" do
+                  span contact.company.name
                 end
               end
               td Time.at(contact.created_at).to_date.to_s

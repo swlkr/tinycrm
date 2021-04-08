@@ -85,25 +85,37 @@ class App < Roda
       end
     end
 
+    # LOGIN
     r.on "login" do
-      # GET /login
+      def login(r, token)
+        user = User.first Sequel.lit("token = ? and token_expires_at > ?", token, Time.now.to_i)
+
+        if user
+          user.update token: nil, token_expires_at: nil
+          r.session["user_id"] = user[:id]
+          r.redirect "/deals"
+        else
+          response.status = 404
+          r.halt
+        end
+      end
+
       r.is do
-        :login
+        # GET /login
+        r.get do
+          :login
+        end
+
+        # POST /login
+        r.post do
+          login r, r.params["token"]
+        end
       end
 
       # GET /login/:token
       r.on String do |token|
         r.is do
-          user = User.first Sequel.lit("token = ? and token_expires_at > ?", token, Time.now.to_i)
-
-          if user
-            user.update token: nil, token_expires_at: nil
-            r.session["user_id"] = user[:id]
-            r.redirect "/deals"
-          else
-            response.status = 404
-            r.halt
-          end
+          login r, token
         end
       end
     end
@@ -134,29 +146,29 @@ class App < Roda
         @contacts = @current_team.contacts
 
         if id == "new"
-          # DEALS /NEW
+          # DEALS NEW
+          # GET /deals/new
           r.get do
             :deals_new
           end
 
-          # DEALS /POST
+          # DEALS CREATE
+          # POST /deals
           r.post do
             company = @current_team.companies.with_hashid(r.params["company_id"]) if r.params["company_id"]
             contact = @current_team.contacts.with_hashid(r.params["contact_id"]) if r.params["contact_id"]
             user = @current_team.users.with_hashid(r.params["user_id"]) if r.params["user_id"]
             stage = @current_team.stages.with_hashid(r.params["stage_id"]) if r.params["stage_id"]
 
-            deal_params = r.params["deal"].slice("notes", "value")
-
-            @deal = Deal.new(deal_params)
+            @deal = Deal.new(r.params.slice("notes", "value"))
             @deal.team = @current_team
             @deal.company = company
             @deal.user = user
             @deal.contact = contact
+            @deal.stage = stage
 
             if @deal.valid?
               @deal.save
-              @deal.add_stage(stage) if stage
               r.redirect "/deals"
             else
               :deals_new
@@ -165,26 +177,30 @@ class App < Roda
         end
 
         r.is "edit" do
-          # DEALS EDIT
           @deal = @current_team.deals.with_hashid(id)
           @contacts = @deal.company.contacts
-          @stage = @deal.latest_stage
 
+          # GET /deals/:id/edit
+          # DEALS EDIT
           r.get do
             :deals_edit
           end
 
+          # POST /deals/:id/edit
+          # DEALS UPDATE
           r.post do
+            company = @current_team.companies.with_hashid(r.params["company_id"]) if r.params["company_id"]
             contact = @current_team.contacts.with_hashid(r.params["contact_id"]) if r.params["contact_id"]
             user = @current_team.users.with_hashid(r.params["user_id"]) if r.params["user_id"]
             stage = @current_team.stages.with_hashid(r.params["stage_id"]) if r.params["stage_id"]
 
-            params = r.params["deal"].slice("value", "notes")
-            @deal.set(params)
+            params = r.params.slice("value", "notes")
+            @deal.set params
             @deal.contact = contact
             @deal.user = user
+            @deal.stage = stage
 
-            if r.params["deal"]["status"] == "closed"
+            if r.params["status"] == "closed"
               @deal.closed_at = Time.now.to_i
             else
               @deal.closed_at = nil
@@ -192,7 +208,6 @@ class App < Roda
 
             if @deal.valid?
               @deal.save
-              @deal.add_stage(stage) if stage
               r.redirect "/deals"
             else
               :deals_edit
@@ -204,6 +219,11 @@ class App < Roda
 
     # STAGES
     r.on "stages" do
+      r.is do
+        @stages = @current_team.stages
+        :stages
+      end
+
       r.is "new" do
         r.get do
           # STAGES NEW
@@ -222,6 +242,29 @@ class App < Roda
             r.redirect "/deals/new"
           else
             :stages_new
+          end
+        end
+      end
+
+      r.is String, "edit" do |id|
+        @stage = @current_team.stages.with_hashid(id)
+
+        # STAGES EDIT
+        # GET /stages/:id/edit
+        r.get do
+          :stages_edit
+        end
+
+        # STAGES UPDATE
+        # POST /stages/:id/edit
+        r.post do
+          @stage.set r.params.slice("name")
+
+          if @stage.valid?
+            @stage.save
+            r.redirect "/stages"
+          else
+            :stages_edit
           end
         end
       end
@@ -392,16 +435,20 @@ class App < Roda
           r.halt
         end
 
-        # CONTACTS EDIT
         r.is "edit" do
+          # CONTACTS EDIT
           # GET /contacts/:id/edit
           r.get do
             :contacts_edit
           end
 
+          # CONTACTS UPDATE
           # POST /contacts/:id/edit
           r.post do
-            if @contact.update params(r)
+            @contact.set params(r)
+
+            if @contact.valid?
+              @contact.save
               r.redirect "/contacts"
             else
               :contacts_edit

@@ -22,6 +22,7 @@ div.vstack.spacing.md do
         thead do
           tr do
             th "Name"
+            th "Deal"
             th "Created"
             th "LinkedIn"
             th "Website"
@@ -34,8 +35,15 @@ div.vstack.spacing.md do
           @companies.each do |company|
             tr do
               td do
-                a href: "/companies/#{company.hashid}" do
+                a href: "/companies/#{company.hashid}/edit" do
                   span company.name
+                end
+              end
+              td do
+                div.hstack.spacing.xs do
+                  span "$#{company.deals.first.value}"
+                  span.badge "#{company.deals.first.stage.name}"
+                  span "#{company.deals.first.status}"
                 end
               end
               td Time.at(company.created_at).to_date.to_s

@@ -1,0 +1,55 @@
+# STAGES INDEX VIEW
+div.vstack.spacing.md do
+  if @stages.any?
+    div.hstack.space_between do
+      h1 "Stages"
+      a.button href: "/stages/new" do
+        "New stage"
+      end
+    end
+  else
+    div.vstack.mt_2xl.spacing.sm.text_center do
+      p "You don't have any stages yet, they help you close! Always be closing!"
+      a.button.w_fit_content.mx_auto href: "/stages/new" do
+        "New stage"
+      end
+    end
+  end
+
+  unless @stages.empty?
+    div.vstack do
+      table do
+        thead do
+          tr do
+            th "Name"
+            th "# Deals"
+            th "Created"
+            th "Modified"
+            th
+          end
+        end
+        tbody do
+          @stages.each do |stage|
+            tr do
+              td do
+                span.badge stage.name
+              end
+              td stage.deals.count
+              td Time.at(stage.created_at).to_date.to_s
+              td do
+                if updated_at = stage.updated_at
+                  Time.at(stage.updated_at).to_date.to_s
+                end
+              end
+              td do
+                a href: "/stages/#{stage.hashid}/edit" do
+                  "Edit"
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end

@@ -35,9 +35,9 @@ div.vstack.spacing.md do
         end
         tbody do
           @deals.each do |deal|
-            stage = deal.latest_stage
             company = deal.company
             contact = deal.contact
+            stage = deal.stage
 
             tr do
               td do
@@ -52,12 +52,16 @@ div.vstack.spacing.md do
               end
               td Time.at(deal.created_at).to_date.to_s
               td deal.user&.email
-              td deal.closed_at ? "Closed" : "Open"
-              td stage&.name
+              td deal.status
+              td do
+                span.badge stage&.name
+              end
               td do
                 Time.at(deal.updated_at).to_date.to_s if deal.updated_at
               end
-              td "$#{deal.value}"
+              td do
+                span.green "$#{deal.value}"
+              end
               td deal.notes
               td do
                 a href: "/deals/#{deal.hashid}/edit" do

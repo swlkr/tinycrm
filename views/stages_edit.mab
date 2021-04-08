@@ -1,0 +1,24 @@
+# STAGES EDIT VIEW
+div.vstack do
+  form.w_sm.mx_auto action: "/stages/#{@stage.hashid}/edit", method: :post do
+    div { csrf_tag("/stages/#{@stage.hashid}/edit") }
+
+    div.vstack.spacing.sm do
+      div.vstack.spacing.xxs do
+        fieldset do
+          label.vstack.spacing.xxs do
+            span "Name"
+            input type: "text", name: "name", value: @stage.name
+          end
+        end
+        if err = @stage.errors[:name]&.first
+          div.error err
+        end
+      end
+
+      button.lg type: "submit" do
+        "Save stage"
+      end
+    end
+  end
+end

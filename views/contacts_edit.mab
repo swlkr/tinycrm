@@ -19,7 +19,7 @@ div.vstack.spacing.md do
         label.vstack.spacing.xxs do
           span "LinkedIn"
           input type: "text", name: "contact[linkedin]", value: @contact.linkedin
-          if linkedin_error = @contact.errors[:linkedin]
+          if linkedin_error = @contact.errors[:linkedin]&.first
             div.error linkedin_error
           end
         end
@@ -29,7 +29,7 @@ div.vstack.spacing.md do
         label.vstack.spacing.xxs do
           span "Email"
           input type: "text", name: "contact[email]", value: @contact.email
-          if email_error = @contact.errors[:email].first
+          if email_error = @contact.errors[:email]&.first
             div.error email_error
           end
         end
@@ -39,7 +39,7 @@ div.vstack.spacing.md do
         label.vstack.spacing.xxs do
           span "Address"
           input type: "text", name: "contact[address]", value: @contact.address
-          if address_error = @contact.errors[:address].first
+          if address_error = @contact.errors[:address]&.first
             div.error address_error
           end
         end
@@ -49,7 +49,7 @@ div.vstack.spacing.md do
         label.vstack.spacing.xxs do
           span "Phone"
           input type: "text", name: "contact[phone]", value: @contact.phone
-          if phone_error = @contact.errors[:phone].first
+          if phone_error = @contact.errors[:phone]&.first
             div.error phone_error
           end
         end

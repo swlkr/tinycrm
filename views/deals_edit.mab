@@ -13,7 +13,11 @@ form.w_sm.mx_auto action: "/deals/#{@deal.hashid}/edit", method: :post do
           select name: "contact_id" do
             @contacts.each do |c|
               option value: c.hashid, selected: @deal.contact&.id == c.id do
-                c.email
+                if c.email&.empty?
+                  "#{c.name}"
+                else
+                  "#{c.name} (#{c.email})"
+                end
               end
             end
           end
@@ -48,7 +52,7 @@ form.w_sm.mx_auto action: "/deals/#{@deal.hashid}/edit", method: :post do
             span "Stage"
             select name: "stage_id" do
               @stages.each do |s|
-                option value: s.hashid, selected: @stage.id == s.id do
+                option value: s.hashid, selected: @deal.stage&.id == s.id do
                   s.name
                 end
               end
@@ -64,7 +68,7 @@ form.w_sm.mx_auto action: "/deals/#{@deal.hashid}/edit", method: :post do
       fieldset do
         label.vstack.spacing.xxs do
           span "Status"
-          select name: "deal[status]" do
+          select name: "status" do
             option value: "open", selected: @deal.closed_at.nil? do
               "Open"
             end
@@ -76,14 +80,14 @@ form.w_sm.mx_auto action: "/deals/#{@deal.hashid}/edit", method: :post do
       fieldset do
         label.vstack.spacing.xxs do
           span "Value"
-          input type: "number", name: "deal[value]", value: @deal.value
+          input type: "number", name: "value", value: @deal.value
         end
       end
 
       fieldset do
         label.vstack.spacing.xxs do
           span "Notes"
-          textarea(name: "deal[notes]", rows: 10) { @deal.notes }
+          textarea(name: "notes", rows: 10) { @deal.notes }
         end
       end
 

@@ -42,7 +42,7 @@ form.w_sm.mx_auto action: "/deals/new", method: :post do
             span "Assignee"
             select name: "user_id" do
               @users.each do |u|
-                option(value: u.hashid) { u.email }
+                option(value: u.hashid) { "#{u.name} (#{u.email})" }
               end
             end
           end
@@ -73,14 +73,14 @@ form.w_sm.mx_auto action: "/deals/new", method: :post do
       fieldset do
         label.vstack.spacing.xxs do
           span "Value"
-          input(type: "number", name: "deal[value]", value: 1_000)
+          input(type: "number", name: "value", value: 1_000)
         end
       end
 
       fieldset do
         label.vstack.spacing.xxs do
           span "Notes"
-          textarea(name: "deal[notes]", rows: 10) {}
+          textarea(name: "notes", rows: 10) {}
         end
       end
 
