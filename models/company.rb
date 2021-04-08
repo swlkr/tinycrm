@@ -3,4 +3,5 @@ class Company < Model
 
   many_to_one :team
   one_to_many :deals
+  one_to_many :contacts
 end

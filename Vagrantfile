@@ -5,8 +5,6 @@
 $script = <<SCRIPT
   echo "*** Updating packages"
 
-  export DEBIAN_FRONTEND=noninteractive
-
   sudo apt-get update
   sudo apt-get -y upgrade
 
@@ -31,7 +29,6 @@ Vagrant.configure('2') do |config|
 
   # Provision the machine with the shell script above
   config.vm.provision "shell", inline: $script, privileged: false
-
   config.ssh.extra_args = ["-t", "cd /vagrant; bash --login"]
 
   # Performance optimizations

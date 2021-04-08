@@ -7,4 +7,9 @@ class Deal < Model
   many_to_one :user
 
   many_to_many :stages
+
+  def latest_stage
+    deal_stage = DealsStage.where(deal: self).order(:created_at).last
+    Stage.find(id: deal_stage.stage_id)
+  end
 end

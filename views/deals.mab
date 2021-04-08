@@ -22,25 +22,33 @@ div.vstack.spacing.md do
         thead do
           tr do
             th "Company"
+            th "Contact"
             th "Created"
             th "Assigned"
             th "Status"
             th "Stage"
             th "Modified"
             th "Value"
+            th "Notes"
             th
           end
         end
         tbody do
           @deals.each do |deal|
-            stage = deal.stages_dataset.order("stages.created_at desc").first
+            stage = deal.latest_stage
             company = deal.company
+            contact = deal.contact
 
             tr do
               td do
-                a href: "/companies/#{company.hashid}" do
+                a href: "/companies/#{company.hashid}/edit" do
                   span company.name
-                end
+                end unless company.nil?
+              end
+              td do
+                a href: "/contacts/#{contact.hashid}/edit" do
+                  span contact.name
+                end unless contact.nil?
               end
               td Time.at(deal.created_at).to_date.to_s
               td deal.user&.email
@@ -50,6 +58,7 @@ div.vstack.spacing.md do
                 Time.at(deal.updated_at).to_date.to_s if deal.updated_at
               end
               td "$#{deal.value}"
+              td deal.notes
               td do
                 a href: "/deals/#{deal.hashid}/edit" do
                   "Edit"

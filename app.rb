@@ -167,14 +167,22 @@ class App < Roda
         r.is "edit" do
           # DEALS EDIT
           @deal = @current_team.deals.with_hashid(id)
+          @contacts = @deal.company.contacts
+          @stage = @deal.latest_stage
 
           r.get do
             :deals_edit
           end
 
           r.post do
+            contact = @current_team.contacts.with_hashid(r.params["contact_id"]) if r.params["contact_id"]
+            user = @current_team.users.with_hashid(r.params["user_id"]) if r.params["user_id"]
+            stage = @current_team.stages.with_hashid(r.params["stage_id"]) if r.params["stage_id"]
+
             params = r.params["deal"].slice("value", "notes")
             @deal.set(params)
+            @deal.contact = contact
+            @deal.user = user
 
             if r.params["deal"]["status"] == "closed"
               @deal.closed_at = Time.now.to_i
@@ -184,6 +192,7 @@ class App < Roda
 
             if @deal.valid?
               @deal.save
+              @deal.add_stage(stage) if stage
               r.redirect "/deals"
             else
               :deals_edit
@@ -310,6 +319,7 @@ class App < Roda
         @company = @current_team.companies.with_hashid(id)
 
         # GET /companies/:hashid
+        # COMPANIES SHOW
         r.is do
           :company
         end
