@@ -154,7 +154,8 @@ class App < Roda
             @deal.user = user
             @deal.contact = contact
 
-            if @deal.save
+            if @deal.valid?
+              @deal.save
               @deal.add_stage(stage) if stage
               r.redirect "/deals"
             else
