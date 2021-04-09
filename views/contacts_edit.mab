@@ -8,8 +8,9 @@ div.vstack.spacing.md do
       div.vstack.spacing.xxs do
         fieldset do
           label.vstack.spacing.xxs do
-            span "Company"
+            span "Select a company"
             select name: "company_id" do
+              option ""
               @companies.each do |c|
                 option(value: c.hashid) { c.name }
               end

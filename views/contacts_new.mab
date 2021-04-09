@@ -10,6 +10,7 @@ div.vstack.spacing.md do
           label.vstack.spacing.xxs do
             span "Company"
             select name: "company[id]" do
+              option ""
               @companies.each do |c|
                 option value: c.hashid do
                   c.name

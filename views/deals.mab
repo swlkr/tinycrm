@@ -54,7 +54,9 @@ div.vstack.spacing.md do
               td deal.user&.email
               td deal.status
               td do
-                span.badge stage&.name
+                span.badge style: "background-color: rgba(#{stage.color}, 0.2); color: rgb(#{stage.color})" do
+                  stage&.name
+                end
               end
               td do
                 Time.at(deal.updated_at).to_date.to_s if deal.updated_at

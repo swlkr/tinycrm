@@ -13,8 +13,15 @@ $script = <<SCRIPT
 
   echo "*** Installing rbenv"
   sudo apt-get install -y rbenv
-  rbenv init
   echo "gem: --no-document" > ~/.gemrc
+
+  echo "*** Installing ruby 3.0.1"
+  rbenv init
+  sudo mkdir -p "$(rbenv root)"/plugins
+  sudo git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
+  rbenv install 3.0.1
+  rbenv global 3.0.1
+  echo 'eval "$(rbenv init -)"' >> ~/.bashrc
 
   echo "*********************"
   echo "PROVISIONING FINISHED"

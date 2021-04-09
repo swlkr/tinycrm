@@ -1,5 +1,6 @@
 # STAGES_NEW VIEW
 div.vstack.mt_lg do
+  h1.text_center "New stage"
   form.w_sm.mx_auto action: "/stages/new", method: :post do
     div { csrf_tag("/stages/new") }
 

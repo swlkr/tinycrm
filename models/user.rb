@@ -3,4 +3,8 @@ class User < Model
 
   many_to_one :team
   one_to_many :deals
+
+  def istwo
+    1 + 1
+  end
 end

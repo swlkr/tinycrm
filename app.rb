@@ -228,15 +228,18 @@ class App < Roda
       r.is "new" do
         r.get do
           # STAGES NEW
+          # GET /stages/new
           @stage = Stage.new
           :stages_new
         end
 
         r.post do
-          # STAGES NEW POST
+          # STAGES CREATE
+          # POST /stages/new
           params = r.params["stage"].slice("name")
           @stage = Stage.new(params)
           @stage.team = @current_team
+          @stage.color = "#{rand(0..190)},#{rand(0..190)},#{rand(0..190)}"
 
           if @stage.valid?
             @stage.save
