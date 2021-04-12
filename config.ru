@@ -7,12 +7,22 @@ require "listen"
 loader = Zeitwerk::Loader.new
 loader.push_dir(__dir__)
 loader.push_dir("#{__dir__}/models")
-loader.enable_reloading
-loader.setup
 
-Listen.to(__dir__, "#{__dir__}/models", only: /(\.rb|\.mab)$/, force_polling: true) { loader.reload }.start
+rack_env = ENV["RACK_ENV"]
 
-run ->(env) {
-  loader.reload
-  App.call(env)
-}
+if rack_env != "production"
+  loader.enable_reloading
+  loader.setup
+
+  Listen.to(__dir__, "#{__dir__}/models", only: /(\.rb|\.mab)$/, force_polling: true) { loader.reload }.start
+
+  run ->(env) {
+    loader.reload
+    App.call(env)
+  }
+else
+  loader.eager_load
+  loader.setup
+
+  run App.freeze.app
+end

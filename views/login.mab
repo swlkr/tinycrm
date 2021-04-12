@@ -1,5 +1,5 @@
 # LOGIN VIEW
-form.w_sm.mx_auto action: "/signup", method: "post" do
+form.w_sm.mx_auto.mt_lg action: "/signup", method: "post" do
   div.vstack.spacing.xs do
     div { csrf_tag("/signup") }
     div.vstack.spacing.xs do

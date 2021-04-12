@@ -393,6 +393,10 @@ a.button:hover {
   width: var(--width-xl);
 }
 
+.w_xs {
+  width: var(--width-xs);
+}
+
 th, td {
   text-align: left
 }
@@ -540,4 +544,45 @@ tbody tr:last-child td:last-child {
 
 .green {
   color: var(--green);
+}
+
+#deals-by-stage tbody {
+  overflow-y: hidden;
+}
+
+#deals-by-stage tbody th {
+  background-color: #fff;
+  z-index: 1;
+}
+
+#deals-by-stage tbody td {
+  animation: moving-bars 4s ease-in;
+}
+
+@keyframes moving-bars {
+  0%  { transform: translateY( 100% ); }
+  15% { transform: translateY( 0 ); }
+}
+
+#deals-by-stage.bar {
+  --labels-size: 200px;
+}
+
+@media (max-width: 768px) {
+  .main {
+    grid-template-areas:
+      "header"
+      "content";
+
+    grid-template-columns: 1fr;
+
+    grid-template-rows:
+      auto /* Header */
+      1fr /* Content */
+  }
+
+  nav {
+    visibility: collapse;
+    height: 0;
+  }
 }

@@ -1,0 +1,62 @@
+# DASHBOARD VIEW
+
+div.vstack.spacing.md do
+  h1 "Dashboard"
+
+  div.hstack.spacing.sm do
+    div class: "card w_xs" do
+      div class: "p_sm" do
+        span "Deals"
+        h1 @deals.count
+      end
+    end
+
+    div class: "card w_xs" do
+      div class: "p_sm" do
+        span "Companies"
+        h1 @companies.count
+      end
+    end
+
+    div class: "card w_xs" do
+      div class: "p_sm" do
+        span "Stages"
+        h1 @stages.count
+      end
+    end
+
+    div class: "card w_xs" do
+      div class: "p_sm" do
+        span "Contacts"
+        h1 @contacts.count
+      end
+    end
+  end
+
+  div.card.p_sm do
+    table id: "deals-by-stage", class: "charts-css column show-labels show-data-on-hover show-heading data-spacing-10", style: "box-shadow: none; height: 250px" do
+      caption style: "text-align: left; margin-bottom: 20px" do
+        h2 "Deals by stage"
+      end
+
+      thead do
+        @stages.each do |stage|
+          tr do
+            th scope: "col" do stage.name end
+          end
+        end
+      end
+
+      @stages.each do |stage|
+        tr do
+          th scope: "row", style: "color: rgb(#{stage.color})" do stage.name end
+          td style: "--size: #{stage.deals.count}; --color: rgba(#{stage.color}, 0.2)" do
+            span class: "data" do
+              stage.deals.count
+            end
+          end
+        end
+      end
+    end
+  end
+end

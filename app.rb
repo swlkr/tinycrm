@@ -1,12 +1,19 @@
 # app.rb
 
 class App < Roda
-  plugin :public
+  # PLUGINS
   plugin :render, engine: "mab"
   plugin :sessions, secret: ENV.fetch("SESSION_SECRET", SecureRandom.urlsafe_base64(64)), key: "id"
   plugin :route_csrf
   plugin :symbol_views
   plugin :slash_path_empty
+
+  plugin :assets,
+    css: ["charts.min.css", "app.css"],
+    gzip: true
+
+  compile_assets
+
   plugin :not_found do
     view "404"
   end
@@ -32,13 +39,22 @@ class App < Roda
   end
 
   route do |r|
-    r.public
+    r.assets
     check_csrf!
     @current_user = User.first(id: r.session['user_id'])
     @current_team = @current_user&.team
 
     r.root do
-      view "root"
+      if @current_user
+        @deals = @current_team.deals
+        @companies = @current_team.companies
+        @stages = @current_team.stages
+        @contacts = @current_team.contacts
+
+        :dashboard
+      else
+        :root
+      end
     end
 
     r.get "gotmail" do
@@ -75,7 +91,7 @@ class App < Roda
           r.redirect "gotmail"
         else
           response.status == 422
-          @error = "That's not an email! Try to include an @ symbol ;)"
+          @error = "That's not an email! Try to include an @ in there"
           :signup
         end
       end
