@@ -10,6 +10,7 @@ class App < Roda
 
   plugin :assets,
     css: ["charts.min.css", "app.css"],
+    js: ["turbo.min.js"],
     gzip: true
 
   compile_assets

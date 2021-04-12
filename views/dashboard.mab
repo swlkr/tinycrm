@@ -34,8 +34,8 @@ div.vstack.spacing.md do
   end
 
   div.card.p_sm do
-    table id: "deals-by-stage", class: "charts-css column show-labels show-data-on-hover show-heading data-spacing-10", style: "box-shadow: none; height: 250px" do
-      caption style: "text-align: left; margin-bottom: 20px" do
+    table id: "deals-by-stage", class: "charts-css column show-labels show-data show-heading data-spacing-10", style: "box-shadow: none; height: 250px" do
+      caption style: "margin-bottom: 20px" do
         h2 "Deals by stage"
       end
 
@@ -49,10 +49,26 @@ div.vstack.spacing.md do
 
       @stages.each do |stage|
         tr do
-          th scope: "row", style: "color: rgb(#{stage.color})" do stage.name end
-          td style: "--size: #{stage.deals.count}; --color: rgba(#{stage.color}, 0.2)" do
-            span class: "data" do
-              stage.deals.count
+          th scope: "row" do
+            span class: "badge", style: "margin: 0 auto; color: rgb(#{stage.color}); background-color: rgba(#{stage.color}, 0.2)" do
+              span stage.name
+            end
+          end
+          if stage.deals.count.zero?
+            td style: "--size: 1; --color: transparent" do
+              div.vstack.center do
+                span class: "data" do
+                  stage.deals.count
+                end
+              end
+            end
+          else
+            td style: "--size: #{stage.deals.count}; --color: rgba(#{stage.color}, 0.2)" do
+              div.vstack.center do
+                span class: "data" do
+                  stage.deals.count
+                end
+              end
             end
           end
         end

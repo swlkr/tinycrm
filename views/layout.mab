@@ -3,9 +3,15 @@ html5 do
     title "tiny crm"
     meta name: "viewport", content: "width=device-width, initial-scale=1"
     meta charset: "utf-8"
-    assets_paths(:css).each do |path|
-      link href: path, rel: "stylesheet"
+    assets_paths(:css).each do |href|
+      link href: href, rel: "stylesheet"
     end
+    assets_paths(:js).each do |src|
+      script(src: src, defer: true, type: "module") {}
+    end
+    #script type: "module" do
+    #  "import * as turbo from \"https://cdn.skypack.dev/@hotwired/turbo\"";
+    #end
   end
 
   body do

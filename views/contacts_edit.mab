@@ -12,7 +12,7 @@ div.vstack.spacing.md do
             select name: "company_id" do
               option ""
               @companies.each do |c|
-                option(value: c.hashid) { c.name }
+                option(value: c.hashid, selected: c.id == @contact.company&.id) { c.name }
               end
             end
           end

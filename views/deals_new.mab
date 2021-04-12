@@ -30,7 +30,11 @@ form.w_sm.mx_auto action: "/deals/new", method: :post do
               option ""
               @contacts.each do |c|
                 option(value: c.hashid) do
-                  span "#{c.name} (#{c.company.name})"
+                  if c.company&.name
+                    span "#{c.name} (#{c.company.name})"
+                  else
+                    span "#{c.name}"
+                  end
                 end
               end
             end
