@@ -9,9 +9,6 @@ html5 do
     assets_paths(:js).each do |src|
       script(src: src, defer: true, type: "module") {}
     end
-    #script type: "module" do
-    #  "import * as turbo from \"https://cdn.skypack.dev/@hotwired/turbo\"";
-    #end
   end
 
   body do
