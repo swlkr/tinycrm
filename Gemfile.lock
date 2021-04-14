@@ -39,9 +39,12 @@ GEM
     loofah (2.9.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
+    mail (2.7.1)
+      mini_mime (>= 0.1.1)
     markaby (0.9.0)
       builder
     method_source (1.0.0)
+    mini_mime (1.1.0)
     minitest (5.14.4)
     nio4r (2.5.7)
     nokogiri (1.11.3-x86_64-linux)
@@ -92,6 +95,7 @@ PLATFORMS
 DEPENDENCIES
   dotenv-rails
   listen
+  mail
   markaby
   pry (~> 0.13.1)
   puma

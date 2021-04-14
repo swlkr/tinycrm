@@ -89,6 +89,9 @@ class App < Roda
             user.save
           end
 
+          # send email
+          Mailer.sendmail("/login/#{user.id}")
+
           r.redirect "gotmail"
         else
           response.status == 422
@@ -110,6 +113,7 @@ class App < Roda
           end unless user.last_login_at
 
           user.update token: nil, token_expires_at: nil, last_login_at: Time.now.to_i
+
           r.session["user_id"] = user[:id]
           r.redirect "/deals"
         else

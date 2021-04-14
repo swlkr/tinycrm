@@ -1,0 +1,8 @@
+html5 do
+  head do
+    meta content: "text/html; charset=UTF-8", "http-equiv" => "Content-Type"
+  end
+  body do
+    yield
+  end
+end

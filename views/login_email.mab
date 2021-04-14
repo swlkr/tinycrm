@@ -1,0 +1,8 @@
+p "Hey #{@user.name if @user.name}"
+a href: "https://tinycrm.swlkr.com/login/#{@user.token}" do
+  "Follow this link to sign in"
+end
+
+p "or if you're having trouble with the link, copy and paste this link in your browser"
+
+p "https://tinycrm.swlkr.com/login/#{@user.token}"

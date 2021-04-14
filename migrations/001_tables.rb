@@ -11,21 +11,23 @@ Sequel.migration do
       primary_key :id
       foreign_key :team_id, :teams, on_delete: :cascade
       String :name
-      String :email, null: false, unique: true
+      String :email, null: false
       String :token
       Integer :token_expires_at
       Integer :last_login_at
       Integer :updated_at
       Integer :created_at, null: false, default: Sequel.lit("strftime('%s', 'now')")
+      unique [:team_id, :email]
     end
 
     create_table(:stages) do
       primary_key :id
       foreign_key :team_id, :teams, on_delete: :cascade
-      String :name, null: false, unique: true
+      String :name, null: false
       String :color
       Integer :updated_at
       Integer :created_at, null: false, default: Sequel.lit("strftime('%s', 'now')")
+      unique [:team_id, :name]
     end
 
     create_table(:companies) do
