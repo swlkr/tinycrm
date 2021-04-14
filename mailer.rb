@@ -4,16 +4,14 @@ class Mailer < Roda
   plugin :symbol_views
   plugin :render, engine: 'mab', layout: 'email_layout'
 
-  if ENV["RACK_ENV"] == "production"
-    Mail.defaults do
+  Mail.defaults do
+    if ENV["RACK_ENV"] == "production"
       delivery_method :smtp,
-        address: 'smtp.gmail.com',
-        user_name: 'swlkr.rbl@gmail.com',
-        password: ENV['GMAIL_APP_PASSWORD'],
+        address: 'smtp.mailgun.org',
+        user_name: 'postmaster@tinycrm.swlkr.com',
+        password: ENV['SMTP_PASSWORD'],
         port: 587
-    end
-  else
-    Mail.defaults do
+    else
       delivery_method :logger
     end
   end
