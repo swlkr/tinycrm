@@ -13,6 +13,10 @@ div.vstack.spacing.md do
           end
         end
 
+        if error = @user.errors[:email]&.first
+          div.error error
+        end
+
         fieldset do
           label.vstack.spacing.xxs do
             span "Name"
@@ -20,8 +24,8 @@ div.vstack.spacing.md do
           end
         end
 
-        if email_error = @user.errors[:name]&.first
-          div.error email_error
+        if error = @user.errors[:name]&.first
+          div.error error
         end
       end
 

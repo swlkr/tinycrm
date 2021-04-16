@@ -1,7 +1,8 @@
 # STAGES EDIT VIEW
 div.vstack do
-  form.w_sm.mx_auto action: "/stages/#{@stage.hashid}/edit", method: :post do
-    div { csrf_tag("/stages/#{@stage.hashid}/edit") }
+  action = "/stages/#{@stage.hashid}/edit"
+  form.w_sm.mx_auto action: action, method: :post do
+    div { csrf_tag(action) }
 
     div.vstack.spacing.sm do
       div.vstack.spacing.xxs do

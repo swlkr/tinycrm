@@ -1,4 +1,5 @@
 p "Hey #{@user.name if @user.name}"
+p "You've been invited to join tinycrm by #{@inviter.email}!"
 a href: "https://tinycrm.swlkr.com/login/#{@user.token}?team=#{@user.team.identifier}" do
   "Follow this link to sign in"
 end

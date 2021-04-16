@@ -55,8 +55,8 @@ div.vstack.spacing.md do
               td deal.status
               td do
                 span.badge style: "background-color: rgba(#{stage.color}, 0.2); color: rgb(#{stage.color})" do
-                  stage&.name
-                end
+                  stage.name
+                end if stage
               end
               td do
                 Time.at(deal.updated_at).to_date.to_s if deal.updated_at
@@ -66,8 +66,17 @@ div.vstack.spacing.md do
               end
               td deal.notes
               td do
-                a href: "/deals/#{deal.hashid}/edit" do
-                  "Edit"
+                div.hstack.spacing.sm do
+                  a href: "/deals/#{deal.hashid}/edit" do
+                    "Edit"
+                  end
+                  action = "/deals/#{deal.hashid}/delete"
+                  form action: action, method: :post do
+                    div { csrf_tag(action) }
+                    button type: "submit", class: "link p_sm" do
+                      span "Delete"
+                    end
+                  end
                 end
               end
             end

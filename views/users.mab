@@ -2,9 +2,20 @@
 div.vstack.spacing.md do
   if @users.any?
     div.hstack.space_between do
-      h1 "Users"
-      a.button href: "/users/new" do
-        "Invite a teammate"
+      div.vstack.spacing.sm do
+        h1 "Your team"
+        div.vstack.spacing.xs do
+          span "Name: #{@current_team.name}"
+          span "Identifier: #{@current_team.identifier}"
+        end
+      end
+      div.hstack.spacing.sm do
+        a.button href: "/teams/edit" do
+          "Edit your team name/identifier"
+        end
+        a.button href: "/users/new" do
+          "Invite a teammate"
+        end
       end
     end
   else
@@ -18,6 +29,10 @@ div.vstack.spacing.md do
 
   unless @users.empty?
     div.vstack do
+      if message = flash["no_mail"]
+        div.bg_light_purple.purple.p_sm.mb_4 message
+      end
+
       table do
         thead do
           tr do
@@ -25,6 +40,7 @@ div.vstack.spacing.md do
             th "Created"
             th "Email"
             th "Modified"
+            th "Last Login"
             th
           end
         end
@@ -33,9 +49,21 @@ div.vstack.spacing.md do
             tr do
               td user.name
               td Time.at(user.created_at).to_date.to_s
-              td user.email
+              td do
+                if user.id == @current_user.id
+                  div.hstack.spacing.xs do
+                    span user.email
+                    span.badge.bg_light_purple.purple "this is you"
+                  end
+                else
+                  user.email
+                end
+              end
               td do
                 Time.at(user.updated_at).to_date.to_s if user.updated_at
+              end
+              td do
+                Time.at(user.last_login_at).to_date.to_s if user.last_login_at
               end
               td do
                 a href: "/users/#{user.hashid}/edit" do

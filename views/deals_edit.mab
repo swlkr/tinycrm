@@ -11,6 +11,7 @@ form.w_sm.mx_auto action: "/deals/#{@deal.hashid}/edit", method: :post do
           label.vstack.spacing.xxs
           span "Company"
           select name: "company_id" do
+            option{}
             @companies.each do |c|
               option value: c.hashid, selected: @deal.company&.id == c.id do
                 c.name
@@ -29,6 +30,7 @@ form.w_sm.mx_auto action: "/deals/#{@deal.hashid}/edit", method: :post do
           label.vstack.spacing.xxs
           span "Primary contact"
           select name: "contact_id" do
+            option{}
             @contacts.each do |c|
               option value: c.hashid, selected: @deal.contact&.id == c.id do
                 if c.email&.empty?
@@ -51,6 +53,7 @@ form.w_sm.mx_auto action: "/deals/#{@deal.hashid}/edit", method: :post do
           label.vstack.spacing.xxs
           span "Assignee"
           select name: "user_id" do
+            option{}
             @users.each do |u|
               option value: u.hashid, selected: @deal.user&.id == u.id do
                 u.email

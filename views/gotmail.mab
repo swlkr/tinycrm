@@ -18,6 +18,11 @@ div.vstack.spacing.md.p_sm.mt_lg do
       div { csrf_tag("/login") }
 
       label.vstack.spacing.xxs do
+        span "Enter your team ID"
+        input type: "text", name: "team", value: @current_team.identifier
+      end
+
+      label.vstack.spacing.xxs do
         span "Enter the code from your email"
         input type: "text", name: "token", autofocus: true
       end

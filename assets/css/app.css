@@ -412,10 +412,6 @@ nav a.active, nav .link.active {
   background-color: var(--purple);
 }
 
-nav button.link {
-  border: none;background: none;box-shadow: none;width: 100%;
-}
-
 table {
   border-collapse: collapse;
   box-shadow: var(--shadow);
@@ -500,6 +496,10 @@ tbody tr:last-child td:last-child {
   width: var(--width-sm);
 }
 
+.w_md {
+  width: var(--with-md);
+}
+
 .field:focus-within label {
   color: var(--purple);
 }
@@ -554,6 +554,10 @@ a.button:hover {
   text-align: center;
 }
 
+.text_left {
+  text-align: left;
+}
+
 .justify_right {
   justify-content: flex-end;
 }
@@ -585,4 +589,20 @@ a.button:hover {
 
 .green {
   color: var(--green);
+}
+
+.mb_4 {
+  margin-bottom: var(--spacing-m);
+}
+
+.link, button.link {
+  border: none;
+  background: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+}
+
+.link:hover, button.link:hover {
+  background: none;
 }

@@ -30,6 +30,7 @@ GEM
       railties (>= 3.2)
     erubi (1.10.0)
     ffi (1.15.0)
+    haikunator (1.1.1)
     hashids (1.0.5)
     i18n (1.8.10)
       concurrent-ruby (~> 1.0)
@@ -94,6 +95,7 @@ PLATFORMS
 
 DEPENDENCIES
   dotenv-rails
+  haikunator
   listen
   mail
   markaby

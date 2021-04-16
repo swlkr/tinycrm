@@ -1,0 +1,39 @@
+# TEAMS EDIT VIEW
+div.vstack.spacing.md do
+  h1.text_center "Edit team"
+  form.w_sm.mx_auto action: "/teams/edit", method: :post do
+    div { csrf_tag("/teams/edit") }
+
+    div.vstack.spacing.sm do
+      div do
+        fieldset do
+          label.vstack.spacing.xxs do
+            span "Name"
+            input type: "text", name: "team[name]", value: @current_team.name
+          end
+        end
+        small.gray "This can be anything you want"
+      end
+
+      div.vstack.spacing.xxs do
+        fieldset do
+          label.vstack.spacing.xxs do
+            span "ID"
+            input type: "text", name: "team[identifier]", value: @current_team.identifier
+          end
+        end
+        if err = @current_team.errors[:identifier]&.first
+          small class: "error" do
+            span "ID "
+            span err
+          end
+        end
+        small.gray "Make sure this is url safe (no spaces or crazy characters)"
+      end
+
+      button type: "submit" do
+        "Update team"
+      end
+    end
+  end
+end

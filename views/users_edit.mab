@@ -11,7 +11,7 @@ div.vstack.spacing.md do
             span "Email"
             input type: "text", name: "user[email]", value: @user.email
           end
-        end
+        end unless @current_user.demo == 1
 
         fieldset do
           label.vstack.spacing.xxs do

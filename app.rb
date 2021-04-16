@@ -2,6 +2,7 @@
 
 class App < Roda
   # PLUGINS
+  plugin :flash
   plugin :render, engine: "mab"
   plugin :sessions, secret: ENV.fetch("SESSION_SECRET", SecureRandom.urlsafe_base64(64)), key: "id"
   plugin :route_csrf
@@ -39,23 +40,58 @@ class App < Roda
     csp.block_all_mixed_content
   end
 
+  def login(r, token)
+    team = Team.find(identifier: r.params["team"])
+    user = User.where(Sequel.lit("team_id = ? and token = ? and token_expires_at > ?", team&.id, token, Time.now.to_i)).first
+
+    if team && user
+      # create these on first login only
+      %w[follow-up qualified demo negotiation won lost unqualified].each do |name|
+        Stage.find_or_create(team_id: team.id, name: name, color: "#{rand(0..190)},#{rand(0..190)},#{rand(0..190)}")
+      end unless user.last_login_at
+
+      user.update token: nil, token_expires_at: nil, last_login_at: Time.now.to_i, demo: 0
+
+      r.session["user_id"] = user[:id]
+      r.redirect "/deals"
+    else
+      response.status = 404
+      r.halt
+    end
+  end
+
   route do |r|
     r.assets
     check_csrf!
+
+    # DEMO USERS
     @current_user = User.first(id: r.session['user_id'])
+
+    unless @current_user
+      @current_user = User.find_or_create(email: "#{SecureRandom.hex(7)}@example.com", demo: 1)
+      haiku = ::Haikunator.haikunate
+      team = Team.create(name: haiku, identifier: haiku)
+      @current_user.update(team_id: team.id)
+
+      stages = %w[follow-up qualified demo negotiation won lost unqualified].map do |name|
+        {team_id: @current_user.team.id, name: name, color: "#{rand(0..190)},#{rand(0..190)},#{rand(0..190)}"}
+      end
+
+      Stage.multi_insert(stages)
+
+      session['user_id'] = @current_user.id
+    end
+
     @current_team = @current_user&.team
 
+    # HOME
     r.root do
-      if @current_user
-        @deals = @current_team.deals
-        @companies = @current_team.companies
-        @stages = @current_team.stages
-        @contacts = @current_team.contacts
+      @deals = @current_team.deals
+      @companies = @current_team.companies
+      @stages = @current_team.stages
+      @contacts = @current_team.contacts
 
-        :dashboard
-      else
-        :root
-      end
+      :dashboard
     end
 
     r.get "gotmail" do
@@ -72,29 +108,35 @@ class App < Roda
       # SIGNUP POST
       r.post do
         email = r.params["email"]
+        team_identifier = r.params["team"]
 
         if email&.include?("@")
           token = SecureRandom.hex(16)
           token_expires_at = Time.now.to_i + 600
 
-          user = User.find_or_create(email: email)
+          # the user may already exist so don't just give away that email
+          # to the current demo user
+          team = Team.find(identifier: team_identifier)
+          user = User.find(team_id: team.id, email: email)
+
+          # this could be bad
+          # if the user does not exist
+          # only then give away the email
+          # to the current user
+          if user.nil?
+            user = @current_user
+            user.email = email
+          end
           user.token = token
           user.token_expires_at = token_expires_at
           user.save
-
-          team = user.team || Team.create(name: "My team")
-
-          if user.team.nil?
-            user.team = team
-            user.save
-          end
 
           # send email
           Mailer.sendmail("/login/#{user.id}")
 
           r.redirect "gotmail"
         else
-          response.status == 422
+          response.status = 422
           @error = "That's not an email! Try to include an @ in there"
           :signup
         end
@@ -103,25 +145,6 @@ class App < Roda
 
     # LOGIN
     r.on "login" do
-      def login(r, token)
-        user = User.first Sequel.lit("token = ? and token_expires_at > ?", token, Time.now.to_i)
-
-        if user
-          # create these on first login only
-          %w[follow-up qualified demo negotiation won lost unqualified].each do |name|
-            Stage.find_or_create(team: user.team, name: name, color: "#{rand(0..190)},#{rand(0..190)},#{rand(0..190)}")
-          end unless user.last_login_at
-
-          user.update token: nil, token_expires_at: nil, last_login_at: Time.now.to_i
-
-          r.session["user_id"] = user[:id]
-          r.redirect "/deals"
-        else
-          response.status = 404
-          r.halt
-        end
-      end
-
       r.is do
         # GET /login
         r.get do
@@ -196,11 +219,11 @@ class App < Roda
               :deals_new
             end
           end
+        else
+          @deal = @current_team.deals.with_hashid(id)
         end
 
         r.is "edit" do
-          @deal = @current_team.deals.with_hashid(id)
-
           # GET /deals/:id/edit
           # DEALS EDIT
           r.get do
@@ -236,13 +259,21 @@ class App < Roda
             end
           end
         end
+
+        # DEALS DELETE
+        r.is "delete" do
+          @deal.destroy
+          flash['success'] = 'Deal deleted succesfully'
+          r.redirect "/deals"
+        end
       end
     end
 
     # STAGES
     r.on "stages" do
+      @stages = @current_team.stages
+
       r.is do
-        @stages = @current_team.stages
         :stages
       end
 
@@ -272,7 +303,9 @@ class App < Roda
       end
 
       r.is String, "edit" do |id|
-        @stage = @current_team.stages.with_hashid(id)
+        @stage = @stages.with_hashid(id)
+
+        puts @stage
 
         # STAGES EDIT
         # GET /stages/:id/edit
@@ -290,6 +323,27 @@ class App < Roda
             r.redirect "/stages"
           else
             :stages_edit
+          end
+        end
+      end
+    end
+
+    # TEAMS
+    r.on "teams" do
+      r.is "edit" do
+        r.get do
+          :teams_edit
+        end
+
+        r.post do
+          @current_team.set(r.params["team"].slice("name", "identifier"))
+
+          if @current_team.valid?
+            @current_team.save
+            r.redirect "/users"
+          else
+            response.status = 422
+            :teams_edit
           end
         end
       end
@@ -315,15 +369,20 @@ class App < Roda
         end
 
         r.post do
+          # INVITE
           # USERS NEW POST
-          @user = User.new params(r)
+          email = r.params.dig("user", "email")
+          @user = User.find(team: @current_team, email: email) || User.new(params(r))
           @user.team = @current_team
-
-          # TODO email user invite email ?
+          @user.token = SecureRandom.hex(16)
+          @user.token_expires_at = Time.now.to_i + 600
 
           if @user.valid?
             @user.save
-            r.redirect "/deals/new"
+            Mailer.sendmail("/invite/#{@user.id}/from/#{@current_user.id}") unless @current_user.demo == 1
+
+            flash["no_mail"] = "Email doesn't get sent for demo accounts to prevent abuse. You'll have to sign up and then re-send the login email manually." if @current_user.demo == 1
+            r.redirect '/users'
           else
             :users_new
           end
@@ -339,7 +398,11 @@ class App < Roda
           end
 
           r.post do
-            @user.set(params(r))
+            if @current_user.demo == 1
+              @user.name = r.params.dig("user", "name")
+            else
+              @user.set params(r)
+            end
 
             if @user.valid?
               @user.save

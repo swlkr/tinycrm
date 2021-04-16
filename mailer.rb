@@ -27,5 +27,16 @@ class Mailer < Roda
 
       :login_email
     end
+
+    r.mail 'invite', Integer, "from", Integer do |id, id2|
+      @user = User[id]
+      @inviter = User[id2]
+      no_mail! unless @user && @inviter.nil?
+
+      to @user.email
+      subject '[tinycrm] Your invite is inside'
+
+      :invite_email
+    end
   end
 end

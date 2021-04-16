@@ -1,19 +1,42 @@
 # SIGNUP VIEW
-form.w_sm.mx_auto.mt_lg method: "post" do
-  div.vstack.spacing.xs do
-    input type: "hidden", name: "_csrf", value: csrf_token('/signup')
+div.vstack.spacing.md do
+  div.vstack.spacing.sm.text_center do
+    h1 "Welcome to tiny crm!"
+    div "The free, open source CRM"
+    if @current_user.demo == 1
+      div.w_sm.mx_auto.vstack.spacing.sm do
+        span "Save your work by signing up with your team name and your email address."
+        span %{
+          After you enter your email you'll get an email with a link to login and
+          all of your deals and everything you've entered so far will be saved!
+        }
+      end
+    end
+  end
 
+  form.w_sm.mx_auto.mt_lg method: "post" do
     div.vstack.spacing.xs do
-      label.vstack.spacing.xs do
-        span "Enter your email"
-        input type: "email", name: "email", autofocus: true
+      input type: "hidden", name: "_csrf", value: csrf_token('/signup')
+
+      div.vstack.spacing.xs do
+        label.vstack.spacing.xs do
+          span "Enter your team ID"
+          input type: "text", name: "team", autofocus: true, value: @current_user.team.identifier
+        end
       end
 
-      div.error @error if @error
-    end
+      div.vstack.spacing.xs do
+        label.vstack.spacing.xs do
+          span "Enter your email"
+          input type: "email", name: "email"
+        end
 
-    button.lg type: "submit" do
-      "Sign up"
+        div.error @error if @error
+      end
+
+      button type: "submit" do
+        "Sign up"
+      end
     end
   end
 end

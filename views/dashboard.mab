@@ -1,7 +1,10 @@
 # DASHBOARD VIEW
 
 div.vstack.spacing.md do
-  h1 "Dashboard"
+  div do
+    h1 "Welcome to tiny crm"
+    div "The free, open source crm"
+  end if @current_user.demo == 1
 
   div.hstack.spacing.sm do
     div class: "card w_xs" do

@@ -2,6 +2,14 @@
 form.w_sm.mx_auto.mt_lg action: "/signup", method: "post" do
   div.vstack.spacing.xs do
     div { csrf_tag("/signup") }
+
+    div.vstack.spacing.xs do
+      label.vstack.spacing.xs do
+        span "Enter your team ID"
+        input type: "text", name: "team", autofocus: true, value: @current_user.team.identifier
+      end
+    end
+
     div.vstack.spacing.xs do
       label.vstack.spacing.xs do
         span "Enter your email"
@@ -9,7 +17,8 @@ form.w_sm.mx_auto.mt_lg action: "/signup", method: "post" do
       end
       div.error @error if @error
     end
-    button.lg type: "submit" do
+
+    button type: "submit" do
       "Login"
     end
   end

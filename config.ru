@@ -1,6 +1,7 @@
 require "dotenv/load"
 require "roda"
 require "sequel"
+require "haikunator"
 require "zeitwerk"
 require "listen"
 
