@@ -22,8 +22,9 @@ if rack_env != "production"
     App.call(env)
   }
 else
-  loader.eager_load
   loader.setup
 
-  run App.freeze.app
+  run ->(env) {
+    App.call(env)
+  }
 end
