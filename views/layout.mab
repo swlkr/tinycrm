@@ -71,7 +71,7 @@ html5 do
 
         div.spacer{}
 
-        form action: "/logout", method: :post do
+        form class: "p_sm", action: "/logout", method: :post do
           div { csrf_tag("/logout") }
           button type: "submit", class: "link p_sm" do
             div.hstack.spacing.xs do
@@ -90,8 +90,11 @@ html5 do
 
       div.content.p_sm do
         div.header.hstack.spacing.sm.justify_right.mb_4 do
+          a href: "/login" do
+            "Login"
+          end
           a href: "/signup", class: "button" do
-            "Save your work"
+            "Sign up for free"
           end
         end if @current_user.demo == 1
 

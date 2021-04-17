@@ -21,7 +21,7 @@ div.vstack.spacing.md do
       div.vstack.spacing.xs do
         label.vstack.spacing.xs do
           span "Enter your team ID"
-          input type: "text", name: "team", autofocus: true, value: @current_user.team.identifier
+          input type: "text", name: "team", autofocus: true
         end
       end
 

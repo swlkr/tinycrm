@@ -1,12 +1,12 @@
 # LOGIN VIEW
 form.w_sm.mx_auto.mt_lg action: "/signup", method: "post" do
-  div.vstack.spacing.xs do
+  div.vstack.spacing.md do
     div { csrf_tag("/signup") }
 
     div.vstack.spacing.xs do
       label.vstack.spacing.xs do
         span "Enter your team ID"
-        input type: "text", name: "team", autofocus: true, value: @current_user.team.identifier
+        input type: "text", name: "team", autofocus: true
       end
     end
 

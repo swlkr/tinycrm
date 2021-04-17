@@ -47,7 +47,10 @@ class App < Roda
     if team && user
       # create these on first login only
       %w[follow-up qualified demo negotiation won lost unqualified].each do |name|
-        Stage.find_or_create(team_id: team.id, name: name, color: "#{rand(0..190)},#{rand(0..190)},#{rand(0..190)}")
+        stage = Stage.find(team_id: team.id, name: name)
+        if stage.nil?
+          Stage.create(team_id: team.id, name: name, color: "#{rand(0..190)},#{rand(0..190)},#{rand(0..190)}")
+        end
       end unless user.last_login_at
 
       user.update token: nil, token_expires_at: nil, last_login_at: Time.now.to_i, demo: 0
