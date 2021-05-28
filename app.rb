@@ -68,7 +68,8 @@ class App < Roda
   end
 
   route do |r|
-    r.assets if ENV["RACK_ENV"] == "development"
+    r.public
+    r.assets
     check_csrf!
 
     # DEMO USERS
