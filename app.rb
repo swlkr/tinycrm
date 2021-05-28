@@ -1,10 +1,14 @@
-# app.rb
+require "roda"
+require "haikunator"
+
+require "./model"
+require "./mailer"
 
 class App < Roda
   # PLUGINS
   plugin :flash
   plugin :render, engine: "mab"
-  plugin :sessions, secret: ENV.fetch("SESSION_SECRET", SecureRandom.urlsafe_base64(64)), key: "id"
+  plugin :sessions, secret: ENV.fetch("SESSION_SECRET"), cookie_options: { max_age: 86400 * 30 }
   plugin :route_csrf
   plugin :symbol_views
   plugin :slash_path_empty
@@ -14,18 +18,18 @@ class App < Roda
     js: ["turbo.min.js"],
     gzip: true
 
-  compile_assets
+  compile_assets unless ENV["RACK_ENV"] == "development"
 
   plugin :not_found do
     view "404"
   end
 
   plugin :default_headers,
-    "Content-Type"=>"text/html",
-    "Strict-Transport-Security"=>"max-age=16070400;",
-    "X-Content-Type-Options"=>"nosniff",
-    "X-Frame-Options"=>"deny",
-    "X-XSS-Protection"=>"1; mode=block"
+    "Content-Type"              => "text/html",
+    "Strict-Transport-Security" => "max-age=16070400;",
+    "X-Content-Type-Options"    => "nosniff",
+    "X-Frame-Options"           => "deny",
+    "X-XSS-Protection"          => "1; mode=block"
 
   plugin :content_security_policy do |csp|
     csp.default_src :none
@@ -64,7 +68,7 @@ class App < Roda
   end
 
   route do |r|
-    r.assets
+    r.assets if ENV["RACK_ENV"] == "development"
     check_csrf!
 
     # DEMO USERS
