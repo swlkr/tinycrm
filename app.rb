@@ -12,6 +12,7 @@ class App < Roda
   plugin :route_csrf
   plugin :symbol_views
   plugin :slash_path_empty
+  plugin :public
 
   plugin :assets,
     css: ["charts.min.css", "app.css"],
